@@ -1,6 +1,6 @@
 # chatify
 
-A new Flutter project.
+Chatify is a messaging mobile app.
 
 ## Getting Started
 
