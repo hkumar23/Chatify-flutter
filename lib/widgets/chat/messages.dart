@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Messages extends StatelessWidget {
+  Messages(this.userId);
+  final String userId;
 
   @override
   Widget build(BuildContext context) {
@@ -14,16 +16,24 @@ class Messages extends StatelessWidget {
     //   }
     // });
     var userSnapshot=FirebaseAuth.instance.currentUser;
+    List<String> userIds=[userId,"${userSnapshot!.uid}"];
+    userIds.sort();
+    String chatId="${userIds[0]}_"+"${userIds[1]}";
+    // print(userIds);
+    print(chatId);
     return StreamBuilder(
-      stream: FirebaseFirestore.instance.collection('chat').orderBy("createdOn",descending: true).snapshots(), 
+      stream: FirebaseFirestore.instance.collection('chats').doc(chatId).collection('messages').orderBy("createdOn",descending: true).snapshots(), 
       builder: (ctx,chatSnapshot){
         if(
           chatSnapshot.connectionState == ConnectionState.waiting ||
-          chatSnapshot==null
+          chatSnapshot.data==null
           ){
           return const Center(child: CircularProgressIndicator(),);
         }
+
+        // print(chatSnapshot);
         final chatDocs=chatSnapshot.data!.docs;
+        print(chatDocs);
         return ListView.builder(
           reverse: true,
           itemCount: chatDocs.length,
@@ -32,7 +42,7 @@ class Messages extends StatelessWidget {
             // Text(userSnapshot.uid);
             MessageBubble(
               chatDocs[index]["text"],
-              chatDocs[index]["userId"]==userSnapshot!.uid,
+              chatDocs[index]["userId"]==userSnapshot.uid,
               chatDocs[index]["userImage"],
               chatDocs[index]["userName"],
               key: ValueKey(chatDocs[index].id),

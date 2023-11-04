@@ -1,53 +1,47 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:chatify2/widgets/chat/new_message.dart';
 import 'package:chatify2/widgets/chat/messages.dart';
 
 class ChatScreen extends StatelessWidget {
-  const ChatScreen({super.key});
+  static const routeName='/chat-screen';
+  ChatScreen(
+    this.themeBrightness,
+    this.toggleTheme,
+    );
+  final Brightness themeBrightness;
+  final Function() toggleTheme;
 
   @override
   Widget build(BuildContext context) {
+    String userId=ModalRoute.of(context)!.settings.arguments as String;
+    // print(userId);
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: (){Navigator.of(context).pop();},
+          icon: const Icon(Icons.arrow_back),
+          color: Theme.of(context).colorScheme.onPrimary,
+          ),
         backgroundColor: Theme.of(context).colorScheme.primary,
         title: Text(
-          "Chatify",
-          style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-            color: Colors.white,
-            ),
+          "User Name",
+          style: Theme.of(context).primaryTextTheme.titleLarge!.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w500,
+          )
           ),
         actions: [
-          DropdownButton(
-            icon: const Icon(
-              Icons.more_vert,
-              color: Colors.white,
-              ),
-            items: const [
-            DropdownMenuItem(
-              value: "logout",
-                child: 
-                // Icon(Icons.logout),
-                Row(
-                  children: [
-                  Icon(
-                    Icons.logout,
-                    color: Colors.black,
-                  ),
-                  SizedBox(width: 8),
-                  Text("Logout"),
-                ]
-                ),
-              ),
-            ],
-            onChanged: (itemIdentifier){
-              if(itemIdentifier=="logout"){
-                FirebaseAuth.instance.signOut();
-              }
-            },
-            )
-        ],
+          IconButton(
+            onPressed: toggleTheme, 
+            icon: Icon(
+              themeBrightness==Brightness.dark ?
+               Icons.dark_mode :
+               Icons.light_mode,
+               ),
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
+        ],  
         ),
       body: Container(
         decoration: BoxDecoration(
@@ -55,8 +49,8 @@ class ChatScreen extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Expanded(child: Messages()),
-            const NewMessage(),
+            Expanded(child: Messages(userId)),
+            NewMessage(userId),
           ],
         ),
       ),

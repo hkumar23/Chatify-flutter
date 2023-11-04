@@ -36,7 +36,9 @@ class MessageBubble extends StatelessWidget {
                   bottomLeft: const Radius.circular(12),
                   bottomRight: const Radius.circular(12),
                   ),
-                color: isMe ? Theme.of(context).colorScheme.inversePrimary : Colors.grey[350],
+                color: isMe ?
+                Theme.of(context).colorScheme.primary :
+                Theme.of(context).colorScheme.secondary,
               ),
               child: Column(
                 crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
@@ -45,11 +47,14 @@ class MessageBubble extends StatelessWidget {
                     userName,
                     style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                       fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onInverseSurface
                     ),
                   ),
                   Text(
                     _message,
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      color: Theme.of(context).colorScheme.onInverseSurface
+                    ),                    
                     // textAlign: isMe ? TextAlign.right : TextAlign.left,
                     ),
                 ],

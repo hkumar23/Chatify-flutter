@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class NewMessage extends StatefulWidget {
-  const NewMessage({super.key});
-
+  const NewMessage(this.userId);
+  final String userId;
   @override
   State<NewMessage> createState() => _NewMessageState();
 }
@@ -15,15 +15,20 @@ class _NewMessageState extends State<NewMessage> {
 
   void _sendMessage() async {
     FocusScope.of(context).unfocus();
-    _controller.clear();
-      
-    var user=FirebaseAuth.instance.currentUser;
-    var userSnapshot= await FirebaseFirestore.instance.collection('users').doc(user!.uid).get();
+    setState(() {      
+      _controller.clear();
+    });
+    var currentUser=FirebaseAuth.instance.currentUser;
+    var userSnapshot= await FirebaseFirestore.instance.collection('users').doc(currentUser!.uid).get();
+
+    List<String> userIds=[widget.userId,currentUser.uid];
+    userIds.sort();
+    String chatId="${userIds[0]}_"+"${userIds[1]}";
     // print(userSnapshot["username"]);
-    FirebaseFirestore.instance.collection('chat').add({
+    FirebaseFirestore.instance.collection('chats').doc(chatId).collection('messages').add({
       "text":_enteredMessage,
       "createdOn":Timestamp.now(),
-      "userId":user.uid,
+      "userId":currentUser.uid,
       "userName":userSnapshot["username"],
       "userImage":userSnapshot["image_url"],
     });
@@ -52,17 +57,15 @@ class _NewMessageState extends State<NewMessage> {
           ),
           Container(
             margin: const EdgeInsets.all(5),
-            padding: const EdgeInsets.all(5),            
+            padding: const EdgeInsets.all(7),        
             decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(7)),
+              borderRadius: const BorderRadius.all(Radius.circular(50)),
               color: Theme.of(context).colorScheme.primary),
             child: IconButton(
               iconSize: 30,
               icon: Icon(
                 Icons.send,
-                color: 
-                Colors.white,
-                // Theme.of(context).colorScheme.inversePrimary,
+                color: Theme.of(context).colorScheme.onPrimary,
                 ),
               onPressed: _enteredMessage.trim().isEmpty ? null : _sendMessage,
               ),

@@ -8,7 +8,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:chatify2/widgets/auth_form.dart';
 
 class AuthScreen extends StatefulWidget {
-  const AuthScreen({super.key});
+    AuthScreen(
+    this.themeBrightness,
+    this.toggleTheme,
+    );
+    final Brightness themeBrightness;
+    final void Function() toggleTheme;
 
   @override
   State<AuthScreen> createState() => _AuthScreenState();
@@ -77,7 +82,18 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: widget.toggleTheme, 
+            icon: Icon(
+              widget.themeBrightness==Brightness.dark ?
+               Icons.dark_mode :
+               Icons.light_mode,
+               ),
+            color: Theme.of(context).colorScheme.onBackground,
+          ),
+        ],),
       body: AuthForm(_submitAuthForm,_isLoading),
     );
   }
