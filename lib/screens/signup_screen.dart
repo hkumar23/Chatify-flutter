@@ -1,42 +1,35 @@
 import 'dart:io';
 
+import 'package:chatify2/providers/auth.dart';
+import 'package:chatify2/screens/home_screen.dart';
 import 'package:chatify2/widgets/user_image_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class AuthForm extends StatefulWidget {
-  AuthForm(
-    this._submitfn,
-    this.isLoading,
-  );
-  final bool isLoading;
-  final void Function(
-    String? email,
-    String? username,
-    String? password,
-    File? userImage,
-    bool isLogin,
-    BuildContext ctx,
-  ) _submitfn;
+class SignupScreen extends StatefulWidget {
+  static const routeName='/signup-screen';
+
   @override
-  State<AuthForm> createState() => _AuthFormState();
+  State<SignupScreen> createState() => _SignupScreenState();
 }
 
-class _AuthFormState extends State<AuthForm> {
-  final _formKey = GlobalKey<FormState>();
+class _SignupScreenState extends State<SignupScreen> {
+  final _formKey=GlobalKey<FormState>();
+  // final _passwordController=TextEditingController();
 
-  bool isLogin=true;  
-  String? _userEmail="";
-  String? _userPassword="";
-  String? _userName="";
-  File? _userImageFile;
+  File? userImageFile;
+  String? userEmail;
+  String? userName;
+  String? userPassword;
+  bool isLoading=false;
+
   void imagePicker(File? image){
-    _userImageFile=image;
+    userImageFile=image;
   }
 
-  void _trySubmit(){
-   final isValid=_formKey.currentState!.validate();
-   FocusScope.of(context).unfocus();
-    if(_userImageFile==null && !isLogin){
+  void _trySubmit() async {
+    FocusScope.of(context).unfocus();
+    if(userImageFile==null){
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text("Please upload an image!"),
@@ -45,21 +38,40 @@ class _AuthFormState extends State<AuthForm> {
       );
       return;
     }
-   if(isValid){
+    if(!_formKey.currentState!.validate()){
+      return;
+    }
     _formKey.currentState!.save();
-    widget._submitfn(
-      _userEmail!.trim(),
-      _userName!.trim(),
-      _userPassword!.trim(),
-      _userImageFile,
-      isLogin,
-      context,
-    );
-   }
+
+    setState(() {
+      isLoading=true;
+    });
+    try{
+      await Provider.of<Auth>(context,listen: false).authenticate(
+        context: context, 
+        username: userName,
+        email: userEmail, 
+        password: userPassword,
+        image: userImageFile,
+        isLogin: false,
+      );
+      setState(() {
+        isLoading=false;
+      });
+      Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+    } catch(err) {
+      debugPrint("Error Occured: $err");
+      setState(() {
+        isLoading=false;
+      });
+      return;
+    }
   }
+
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return Scaffold(
+      body: Center(
       child: Card(
         margin: const EdgeInsets.all(20),
         child: SingleChildScrollView(
@@ -70,7 +82,7 @@ class _AuthFormState extends State<AuthForm> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if(!isLogin)UserImagePicker(imagePicker),
+                  UserImagePicker(imagePicker),
                   TextFormField(
                     key: const Key("email"),
                     validator: (value){
@@ -82,10 +94,9 @@ class _AuthFormState extends State<AuthForm> {
                     keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(label: Text("Email Address")),
                     onSaved: (value){
-                      _userEmail=value;
+                      userEmail=value;
                     },
                   ),
-                  if(!isLogin)
                   TextFormField(
                     key: const Key("username"),
                     validator: (value){
@@ -97,7 +108,7 @@ class _AuthFormState extends State<AuthForm> {
                     keyboardType: TextInputType.name,
                     decoration: const InputDecoration(label: Text("Username")),
                     onSaved: (value){
-                      _userName=value;
+                      userName=value;
                     },
                   ),
                   TextFormField(
@@ -112,39 +123,38 @@ class _AuthFormState extends State<AuthForm> {
                     obscureText: true,
                     decoration: const InputDecoration(label: Text("Password")),
                     onSaved: (value){
-                      _userPassword=value;
+                      userPassword=value;
                     },
                   ),
                   const SizedBox(height: 10,),
-                  if(widget.isLoading)
+                  if(isLoading)
                   const CircularProgressIndicator(),
-                  if(!widget.isLoading)
+                  if(!isLoading)
                   ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.primaryContainer),
                     ),
-                    onPressed: _trySubmit,            
+                    onPressed:_trySubmit,          
                     child: Text(
-                        isLogin ? "  Login  " : "  Signup  ",
+                        "  Signup  ",
                         style: Theme.of(context).textTheme.labelLarge!.copyWith(
                           color: Theme.of(context).colorScheme.onPrimaryContainer,
                         )
                         ),
                     ),
-                  if(!widget.isLoading) 
+                  if(!isLoading) 
                   TextButton(
                     onPressed: (){
-                      setState(() {                     
-                      isLogin=!isLogin;
-                      });
+                      Navigator.of(context).pop();
                     },
-                    child: Text(isLogin ? "Create new Account" : "I already have an Account",),
+                    child: const Text("I already have an Account",),
                     ),
               ],)
               ),
           ),
         ),
       ),
+    ),
     );
   }
 }

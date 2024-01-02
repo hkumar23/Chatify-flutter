@@ -1,11 +1,15 @@
+import 'package:chatify2/providers/auth.dart';
+import 'package:chatify2/screens/add_contacts.dart';
 import 'package:chatify2/screens/home_screen.dart';
+import 'package:chatify2/screens/login_screen.dart';
+import 'package:chatify2/screens/signup_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
 import 'package:chatify2/screens/chat_screen.dart';
-import 'package:chatify2/screens/auth_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,44 +42,52 @@ class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'chatify2',
-      theme: ThemeData(
-        // colorScheme: ColorScheme.fromSeed(
-        //   primary: Colors.blue,
-        //   seedColor: Colors.blue,
-        //   surface: Colors.blue.shade50,
-        //   secondary: Colors.blueGrey,
-        //   ),
-        colorSchemeSeed: Colors.blue,
-        // primarySwatch: Colors.blue,
-        brightness: themeBrightness,
-        // elevatedButtonTheme: ElevatedButtonThemeData(
-        //   style: ElevatedButton.styleFrom(
-        //     backgroundColor: Colors.blue,
-        //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0))
-        //   )
-        // ),
-        // textButtonTheme: TextButtonThemeData(
-        //   style: TextButton.styleFrom(
-        //     foregroundColor: Colors.blue,
-        //   )
-        // ),
-        useMaterial3: true,
-      ),
-      home: StreamBuilder(
-        stream: FirebaseAuth.instance.authStateChanges(), 
-        builder: (ctx,userSnapshot){
-          if(userSnapshot.hasData){
-            return HomeScreen(themeBrightness,toggleTheme);
-          }
-          return AuthScreen(themeBrightness,toggleTheme);
-        },
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_)=> Auth()),
+      ],
+      child: MaterialApp(
+        title: 'chatify2',
+        theme: ThemeData(
+          // colorScheme: ColorScheme.fromSeed(
+          //   primary: Colors.blue,
+          //   seedColor: Colors.blue,
+          //   surface: Colors.blue.shade50,
+          //   secondary: Colors.blueGrey,
+          //   ),
+          colorSchemeSeed: Colors.blue,
+          // primarySwatch: Colors.blue,
+          brightness: themeBrightness,
+          // elevatedButtonTheme: ElevatedButtonThemeData(
+          //   style: ElevatedButton.styleFrom(
+          //     backgroundColor: Colors.blue,
+          //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0))
+          //   )
+          // ),
+          // textButtonTheme: TextButtonThemeData(
+          //   style: TextButton.styleFrom(
+          //     foregroundColor: Colors.blue,
+          //   )
+          // ),
+          useMaterial3: true,
         ),
-      routes: {
-        HomeScreen.routeName :(context) => HomeScreen(themeBrightness,toggleTheme),
-        ChatScreen.routeName :(context) => ChatScreen(themeBrightness, toggleTheme),
-      },
+        home: StreamBuilder(
+          stream: FirebaseAuth.instance.authStateChanges(), 
+          builder: (ctx,userSnapshot){
+            if(userSnapshot.hasData){
+              return HomeScreen(themeBrightness,toggleTheme);
+            }
+            return LoginScreen();
+          },
+          ),
+        routes: {
+          HomeScreen.routeName :(context) => HomeScreen(themeBrightness,toggleTheme),
+          ChatScreen.routeName :(context) => ChatScreen(themeBrightness, toggleTheme),
+          AddContactScreen.routeName:(context) => AddContactScreen(),
+          LoginScreen.routeName: (context) => LoginScreen(),
+          SignupScreen.routeName: (context) => SignupScreen(),
+        },
+      ),
     );
   }
 }
