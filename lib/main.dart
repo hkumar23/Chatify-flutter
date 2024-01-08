@@ -1,5 +1,7 @@
 import 'package:chatify2/providers/auth.dart';
-import 'package:chatify2/screens/add_contacts.dart';
+import 'package:chatify2/providers/contacts_prov.dart';
+import 'package:chatify2/screens/addcontact_screen.dart';
+import 'package:chatify2/screens/contact_profile_screen.dart';
 import 'package:chatify2/screens/home_screen.dart';
 import 'package:chatify2/screens/login_screen.dart';
 import 'package:chatify2/screens/signup_screen.dart';
@@ -43,8 +45,9 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
+      providers: [        
         ChangeNotifierProvider(create: (_)=> Auth()),
+        ChangeNotifierProvider(create: (_)=> Contacts()),
       ],
       child: MaterialApp(
         title: 'chatify2',
@@ -82,10 +85,11 @@ class _MyAppState extends State<MyApp> {
           ),
         routes: {
           HomeScreen.routeName :(context) => HomeScreen(themeBrightness,toggleTheme),
-          ChatScreen.routeName :(context) => ChatScreen(themeBrightness, toggleTheme),
+          ChatScreen.routeName :(context) => ChatScreen(),
           AddContactScreen.routeName:(context) => AddContactScreen(),
           LoginScreen.routeName: (context) => LoginScreen(),
           SignupScreen.routeName: (context) => SignupScreen(),
+          ContactProfileScreen.routeName: (context) => ContactProfileScreen(),
         },
       ),
     );

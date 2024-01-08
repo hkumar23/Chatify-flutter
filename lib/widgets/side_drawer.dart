@@ -1,5 +1,5 @@
 import 'package:chatify2/providers/auth.dart';
-import 'package:chatify2/screens/add_contacts.dart';
+import 'package:chatify2/screens/addcontact_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -68,9 +68,9 @@ class SideDrawer extends StatelessWidget {
                                                 ),
                                             ),
                                           ),
-                                          const SizedBox(
-                                            height: 7,
-                                          ),
+                                          // const SizedBox(
+                                          //   height: 7,
+                                          // ),
                                           Text(
                                             userData["username"],
                                             style: Theme.of(context).textTheme.headlineMedium!.copyWith(
@@ -86,18 +86,20 @@ class SideDrawer extends StatelessWidget {
                                               ),
                                                   
                                           ),
-                                          Text(
-                                            userData["email"],
-                                            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              // shadows: [
-                                              //   Shadow(
-                                              //     blurRadius: 1.5,
-                                              //     color: Colors.black.withOpacity(0.3),
-                                              //     offset: const Offset(0,1.5),
-                                              //   ),
-                                              // ],
-                                              ),
+                                          Expanded(
+                                            child: Text(
+                                              userData["email"],
+                                              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                // shadows: [
+                                                //   Shadow(
+                                                //     blurRadius: 1.5,
+                                                //     color: Colors.black.withOpacity(0.3),
+                                                //     offset: const Offset(0,1.5),
+                                                //   ),
+                                                // ],
+                                                ),
+                                            ),
                                           ),
                                         ],
                                       );
@@ -132,7 +134,7 @@ class SideDrawer extends StatelessWidget {
                                 _listTileBuilder(
                                   context,
                                   Icons.person_add,
-                                  "Add Cew Contact",
+                                  "Add New Contact",
                                   (){
                                     Navigator.of(context).pushNamed(AddContactScreen.routeName);
                                   },
@@ -143,15 +145,17 @@ class SideDrawer extends StatelessWidget {
                                   "Feedback",
                                   (){},
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height:200,
                                   ),
-                                _listTileBuilder(
-                                  context,
-                                  Icons.logout, 
-                                  "Logout",                                                                      
-                                  (){Provider.of<Auth>(context,listen: false).logout(context);},
-                                  )
+                                Expanded(
+                                  child: _listTileBuilder(
+                                    context,
+                                    Icons.logout, 
+                                    "Logout",                                                                      
+                                    (){Provider.of<Auth>(context,listen: false).logout(context);},
+                                    ),
+                                )
                               ],
                             ),
                           ),

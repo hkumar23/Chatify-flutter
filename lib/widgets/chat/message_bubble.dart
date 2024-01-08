@@ -23,9 +23,9 @@ class MessageBubble extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if(!isMe) const SizedBox(width: 5),
-            if(!isMe) CircleAvatar(backgroundImage: NetworkImage(userImage)),
+            // if(!isMe) CircleAvatar(backgroundImage: NetworkImage(userImage)),
             Container(
-              constraints: const BoxConstraints(maxWidth: 240,minWidth: 40),
+              constraints: const BoxConstraints(maxWidth: 270,minWidth: 100),
               margin: const EdgeInsets.symmetric(horizontal: 8,vertical: 4),
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
               // width: 140,
@@ -47,20 +47,20 @@ class MessageBubble extends StatelessWidget {
                     userName,
                     style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                       fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onInverseSurface
+                    color: Theme.of(context).colorScheme.onSecondary
                     ),
                   ),
                   Text(
                     _message,
                     style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      color: Theme.of(context).colorScheme.onInverseSurface
+                      color: Theme.of(context).colorScheme.onSecondary
                     ),                    
                     // textAlign: isMe ? TextAlign.right : TextAlign.left,
                     ),
                 ],
               ),
             ),
-            if(isMe)CircleAvatar(backgroundImage: NetworkImage(userImage)),
+            // if(isMe)CircleAvatar(backgroundImage: NetworkImage(userImage)),
             if(isMe) const SizedBox(width: 5),
           ],
         ),
