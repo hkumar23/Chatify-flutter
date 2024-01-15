@@ -1,5 +1,7 @@
 import 'package:chatify2/screens/contact_profile_screen.dart';
+import 'package:chatify2/screens/videocall_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:chatify2/widgets/chat/new_message.dart';
@@ -17,6 +19,12 @@ class ChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var otherUserData=ModalRoute.of(context)!.settings.arguments as Map<String,dynamic>;
+
+    var currUserSnapshot=FirebaseAuth.instance.currentUser;
+    String currentUserId=currUserSnapshot!.uid;
+    List<String> userIds=[otherUserData['userId'],currentUserId];
+    userIds.sort();
+    String chatId="${userIds[0]}_"+"${userIds[1]}";
     // print(otherUserData['userId']);
     // print(otherUserId);
     return Scaffold(
@@ -54,15 +62,22 @@ class ChatScreen extends StatelessWidget {
             ),
           ),
         ),
-        // actions: [
-        //   IconButton(
-        //     onPressed: (){},
-        //     icon: Icon(
-        //         Icons.light_mode,
-        //         color: Theme.of(context).colorScheme.onSurface,
-        //        ),
-        //   ),
-        // ],  
+        actions: [
+          IconButton(
+            onPressed: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => VideoCallScreen(
+                  chatId,
+                ))                
+              );
+            },
+            icon: Icon(
+                Icons.video_call_rounded,
+                color: Theme.of(context).colorScheme.onSurface,
+               ),
+          ),
+        ],  
         ),
       body: Container(
         decoration: BoxDecoration(
@@ -70,7 +85,7 @@ class ChatScreen extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Expanded(child: Messages(otherUserData['userId'])),
+            Expanded(child: Messages(otherUserData['userId'],chatId,currentUserId)),
             NewMessage(otherUserData['userId']),
           ],
         ),

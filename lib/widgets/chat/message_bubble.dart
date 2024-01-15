@@ -1,20 +1,26 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class MessageBubble extends StatelessWidget {
+  final String userImage;
+  final String userName;
+  final DateTime chatDateTime;
+  final String _message;
+  final bool isMe;
+  final Key? key;
     MessageBubble(
     this._message,
     this.isMe,
     this.userImage,
     this.userName,
+    this.chatDateTime,
     {this.key}
     );
-  final String userImage;
-  final String userName;
-  final String _message;
-  final bool isMe;
-  final Key? key;
+
   @override
   Widget build(BuildContext context) {
+  String messageSentTime= DateFormat('HH:mm, dd MMM').format(chatDateTime);
     // print(userName);
     return Row(
       mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
@@ -43,20 +49,25 @@ class MessageBubble extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                 children: [
+                  // Text(
+                  //   userName,
+                  //   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                  //     fontWeight: FontWeight.bold,
+                  //   color: Theme.of(context).colorScheme.onSecondary
+                  //   ),
+                  // ),
                   Text(
-                    userName,
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onSecondary
-                    ),
-                  ),
-                  Text(
-                    _message,
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      color: Theme.of(context).colorScheme.onSecondary
-                    ),                    
+                      _message,
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        color: Theme.of(context).colorScheme.onSecondary
+                      ),                    
                     // textAlign: isMe ? TextAlign.right : TextAlign.left,
                     ),
+                  Text(
+                    messageSentTime,
+                    style: TextStyle(color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.7),
+                    ),
+                  ),
                 ],
               ),
             ),
