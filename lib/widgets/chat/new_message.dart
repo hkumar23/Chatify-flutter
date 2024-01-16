@@ -47,12 +47,11 @@ class _NewMessageState extends State<NewMessage> {
     return Container(
       margin: const EdgeInsets.only(top: 8),
       padding: const EdgeInsets.all(8),
-      child: Row(
+      child: Row(        
         children: [
-          Expanded(
-            child: TextField(
-
-              decoration: InputDecoration(
+          Expanded(            
+            child: TextField(              
+              decoration: InputDecoration(                 
                 suffixIcon: IconButton(
                   onPressed: _enteredMessage.trim().isEmpty ? null : _sendMessage,
                   icon: Container(
@@ -60,7 +59,7 @@ class _NewMessageState extends State<NewMessage> {
                         shape: BoxShape.circle,
                         color: Theme.of(context).colorScheme.inversePrimary,
                       ),
-                      padding: EdgeInsets.all(7),
+                      padding: const EdgeInsets.all(7),
                       // color: Theme.of(context).colorScheme.inversePrimary,
                       child: Icon(
                         Icons.send_rounded,

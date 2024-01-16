@@ -38,6 +38,22 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
   }
 
+  void toggleAudio(){
+    setState(() {
+      isAudioOn=!isAudioOn;
+    });
+
+    _engine.muteLocalAudioStream(!isAudioOn);    
+  }
+
+  void toggleVideo(){
+    setState(() {
+      isVideoOn=!isVideoOn;
+    });
+
+    _engine.muteLocalVideoStream(!isVideoOn);
+  }
+
   Future<String?> getToken({required String channelId}) async {
     try{
       final response=await http.get(Uri.parse("https://powerful-red-earthworm.cyclic.app/access_token?channelName=${widget.channel}"));
@@ -158,18 +174,16 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
                     iconOn: Icons.mic,
                     iconOff: Icons.mic_off,
                     isButtonOn: isAudioOn,
-                    onTapFunc: () {
-                          setState(() {
-                            isAudioOn=!isAudioOn;
-                          });
-                        },
-                      ),  
+                    onTapFunc: toggleAudio,
+                    ),  
                   const SizedBox(width: 15,),
                   VideoCallButton(
                     iconOn: Icons.flip_camera_ios,
                     iconOff: null,
                     isButtonOn: true,
-                    onTapFunc: (){},
+                    onTapFunc: (){
+                        _engine.switchCamera();
+                      },
                     ),
                   const SizedBox(width: 15,),
                   GestureDetector(
@@ -195,11 +209,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
                     iconOn: Icons.videocam,
                     iconOff: Icons.videocam_off,
                     isButtonOn: isVideoOn,
-                    onTapFunc: () {
-                        setState(() {
-                          isVideoOn=!isVideoOn;
-                        });
-                      },
+                    onTapFunc: toggleVideo,
                     ),
                   const SizedBox(width: 15,),
                   VideoCallButton(
@@ -238,6 +248,14 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
   }
   Widget _renderLocalPreview(){
    return Container(
+     constraints: const BoxConstraints(
+      minHeight: 300,
+      maxHeight: 900,
+      minWidth: 200,
+      maxWidth: 600,
+     ),
+    //  height: 300,
+    //  width: 200,
      decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(20),
       border: Border.all(
@@ -247,11 +265,16 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
      ),
      child: ClipRRect(
        borderRadius: BorderRadius.circular(18),
-       child: AgoraVideoView(
+       child: isVideoOn 
+        ? AgoraVideoView(
           controller: VideoViewController(
             rtcEngine: _engine,
             canvas: const VideoCanvas(uid: 0),
             ),
+          )
+        : Image.network(
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSN0Y47SWNtE4TRG2UhbZarFiP0gAXt_fivq9yp8muW18Uvy67eQQoi_bUEB6hq_Wti9Cs&usqp=CAU",
+          fit: BoxFit.cover,
           ),
      ),
    );
@@ -284,13 +307,14 @@ class _VideoCallButtonState extends State<VideoCallButton> {
         width: 35,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(100),
-          color: Colors.white,
+          color: widget.isButtonOn ? Colors.white : Colors.grey,
         ),
         child: Icon(
           widget.isButtonOn?
           widget.iconOn : widget.iconOff,
           size: 22,
-          ),
+          color: Colors.black,
+        ),
       ),
     );
   }

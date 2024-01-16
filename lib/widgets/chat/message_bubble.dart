@@ -43,8 +43,8 @@ class MessageBubble extends StatelessWidget {
                   bottomRight: const Radius.circular(12),
                   ),
                 color: isMe ?
-                Theme.of(context).colorScheme.primary :
-                Theme.of(context).colorScheme.secondary,
+                Theme.of(context).colorScheme.primaryContainer :
+                Theme.of(context).colorScheme.outlineVariant,
               ),
               child: Column(
                 crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
@@ -59,13 +59,13 @@ class MessageBubble extends StatelessWidget {
                   Text(
                       _message,
                       style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                        color: Theme.of(context).colorScheme.onSecondary
+                        color: Theme.of(context).colorScheme.onSurface
                       ),                    
                     // textAlign: isMe ? TextAlign.right : TextAlign.left,
                     ),
                   Text(
                     messageSentTime,
-                    style: TextStyle(color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.7),
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                     ),
                   ),
                 ],

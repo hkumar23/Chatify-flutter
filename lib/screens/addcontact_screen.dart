@@ -165,7 +165,7 @@ class _AddContactScreenState extends State<AddContactScreen> {
                        const SizedBox(height: 10,),
                        OutlinedButton(
                         onPressed: () async {
-                          const sharedText="Hey! I am using Chatify.\nJoin me to chat with your friends.\nDownload the app from:\nhttps://drive.google.com/file/d/12k7jTHTZmFYbDEMxacGRuB5i8ylcEglK/view?usp=sharing";
+                          const sharedText="Hey! I am using Chatify.\nJoin me to chat with your friends.\nDownload the app from:\nhttps://drive.google.com/file/d/1D9q9tY-2tL1kfZc9AcZtrgi8whPtQrhI/view?usp=drive_link";
                           await Share.share(sharedText,subject: "Hey! I am using Chatify.",);
                         },
                         child: const Row(
