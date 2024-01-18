@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 class LoginScreen extends StatefulWidget {
   static const routeName='/login-screen';
 
+  const LoginScreen({super.key});
+
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
@@ -33,6 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _trySubmit() async {
     bool isValid=_formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
+    // print("_trySubmit Called");
     if(!isValid){
       return;
     }
@@ -47,6 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
         email: _emailController.text.trim(), 
         password: _passwordController.text.trim(),
       );
+      // print("authenticated successfully");
       if(mounted){
         setState(() {
           isLoading=false;
@@ -88,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       return null;
                     },
                     keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       // suffixIcon: IconButton(
                       //   onPressed: (){
                       //     _emailController.clear();

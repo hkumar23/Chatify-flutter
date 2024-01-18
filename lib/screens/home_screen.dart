@@ -1,5 +1,7 @@
+import 'package:chatify2/providers/auth.dart';
 import 'package:chatify2/screens/addcontact_screen.dart';
 import 'package:chatify2/screens/chat_screen.dart';
+import 'package:chatify2/utils/app_methods.dart';
 import 'package:chatify2/widgets/side_drawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -7,13 +9,15 @@ import 'package:flutter/material.dart';
 
 import 'package:chatify2/widgets/contact_item.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = '/home-screen';
   
-  HomeScreen(
+  const HomeScreen(
     this.themeBrightness,
-    this.toggleTheme,
+    this.toggleTheme, 
+    {super.key}
     );
   final Brightness themeBrightness;
   final void Function() toggleTheme;
@@ -39,16 +43,26 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void fetchData(BuildContext context) async {
+    await AppMethods.getUserDataFromLocalStorage(context);
+  }
+
   @override
   void initState() {
-    fetchContactsList();
     super.initState();
+    fetchContactsList();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    fetchData(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(    
-      drawer: SideDrawer(),
+      drawer: const SideDrawer(),
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,

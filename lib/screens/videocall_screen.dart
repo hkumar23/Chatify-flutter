@@ -1,16 +1,20 @@
 import 'dart:convert';
 
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:chatify2/providers/auth.dart';
+import 'package:chatify2/widgets/videocall/remote_videooff.dart';
+import 'package:chatify2/widgets/videocall/toolbar_button.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 const appId="be2308d60e85411691e4198bb58003f0";
 //temporary token
 
 class VideoCallScreen extends StatefulWidget {
   VideoCallScreen(
-    this.channel
+    this.channel, {super.key}
   );
   var channel;
   @override
@@ -19,13 +23,15 @@ class VideoCallScreen extends StatefulWidget {
 
 class _VideoCallScreenState extends State<VideoCallScreen> {
   int? _remoteUid;
-  bool _localUserJoined=false;
+  bool? _localUserJoined=false;
   late RtcEngine _engine;
   var token;
   // var channel;
-  bool isAudioOn=true;
-  bool isVideoOn=true;
+  bool isMicOn=true;
+  bool isLocalVideoOn=true;
+  bool isRemoteVideoOn=true;
   bool isFrontCam=true;
+  bool isSpeakerOn=true;
 
   @override
   void initState() {
@@ -40,18 +46,34 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
 
   void toggleAudio(){
     setState(() {
-      isAudioOn=!isAudioOn;
+      isSpeakerOn=!isSpeakerOn;
     });
 
-    _engine.muteLocalAudioStream(!isAudioOn);    
+    _engine.muteAllRemoteAudioStreams(!isSpeakerOn);
+  }
+
+  void toggleMic(){
+    setState(() {
+      isMicOn=!isMicOn;
+    });
+
+    _engine.muteLocalAudioStream(!isMicOn);    
   }
 
   void toggleVideo(){
     setState(() {
-      isVideoOn=!isVideoOn;
+      isLocalVideoOn=!isLocalVideoOn;
     });
 
-    _engine.muteLocalVideoStream(!isVideoOn);
+    _engine.muteLocalVideoStream(!isLocalVideoOn);
+  }
+
+  void switchCam(){
+    setState(() {
+      isFrontCam=!isFrontCam;
+    });
+    
+    _engine.switchCamera();                      
   }
 
   Future<String?> getToken({required String channelId}) async {
@@ -75,7 +97,6 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
       appId: appId,
       channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
     ));
-
 
     _engine.registerEventHandler(
       RtcEngineEventHandler(
@@ -104,6 +125,18 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
           debugPrint(
               '[onTokenPrivilegeWillExpire] connection: ${connection.toJson()}, token: $token');
         },
+        onRemoteVideoStateChanged: (rtcConnection,remoteUid,videoState,reason,elapsed){
+          if(videoState==RemoteVideoState.remoteVideoStateStopped){
+            setState(() {
+              isRemoteVideoOn=false;
+            });
+          }
+          else if(videoState==RemoteVideoState.remoteVideoStateDecoding){
+            setState(() {
+              isRemoteVideoOn=true;
+            });
+          }
+        }
       )
     );
 
@@ -138,6 +171,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(Provider.of<Auth>(context).userImageUrl);
     return Scaffold(
       body: Stack(
         children: [
@@ -145,17 +179,11 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
             child: _renderRemoteVideo(),
           ),
           Align(
-            alignment: const Alignment(0.9,0.6),
-            child: SizedBox(
-              height: 120,
-              width: 100,
-              child: Center(
-                child: _localUserJoined ? 
-                _renderLocalPreview() : 
-                const CircularProgressIndicator(),   
-              ),
+              alignment: const Alignment(0.9,0.6),
+              child: _localUserJoined! ? 
+                  _renderLocalPreview():
+                  const CircularProgressIndicator(),
             ),
-          ),
           Align(
             alignment: const Alignment(0,0.9),
             child: Container(
@@ -170,20 +198,18 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const SizedBox(width: 20,),
-                  VideoCallButton(
+                  ToolbarButton(
                     iconOn: Icons.mic,
                     iconOff: Icons.mic_off,
-                    isButtonOn: isAudioOn,
-                    onTapFunc: toggleAudio,
+                    isButtonOn: isMicOn,
+                    onTapFunc: toggleMic,
                     ),  
                   const SizedBox(width: 15,),
-                  VideoCallButton(
+                  ToolbarButton(
                     iconOn: Icons.flip_camera_ios,
                     iconOff: null,
                     isButtonOn: true,
-                    onTapFunc: (){
-                        _engine.switchCamera();
-                      },
+                    onTapFunc: switchCam,
                     ),
                   const SizedBox(width: 15,),
                   GestureDetector(
@@ -205,18 +231,18 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
                     ),
                   ),  
                   const SizedBox(width: 15,),
-                  VideoCallButton(
+                  ToolbarButton(
                     iconOn: Icons.videocam,
                     iconOff: Icons.videocam_off,
-                    isButtonOn: isVideoOn,
+                    isButtonOn: isLocalVideoOn,
                     onTapFunc: toggleVideo,
                     ),
                   const SizedBox(width: 15,),
-                  VideoCallButton(
-                    iconOn: Icons.more_vert,
-                    iconOff: null,
-                    isButtonOn: true,
-                    onTapFunc: (){},
+                  ToolbarButton(
+                    iconOn: Icons.volume_up_rounded,
+                    iconOff: Icons.volume_off_rounded,
+                    isButtonOn: isSpeakerOn,
+                    onTapFunc: toggleAudio,
                     ),
                   const SizedBox(width: 20,),
                 ],
@@ -230,13 +256,15 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
 
   Widget _renderRemoteVideo(){
     if (_remoteUid != null) {
-      return AgoraVideoView(
+      return isRemoteVideoOn ?
+      AgoraVideoView(
         controller: VideoViewController.remote(
           rtcEngine: _engine,
           canvas: VideoCanvas(uid: _remoteUid),
           connection: RtcConnection(channelId: widget.channel),
         ),
-      );
+      ):
+      const RemoteVideoOff();
     } else {
       return const Center(
         child: Text(
@@ -249,23 +277,30 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
   Widget _renderLocalPreview(){
    return Container(
      constraints: const BoxConstraints(
-      minHeight: 300,
+      minHeight: 150,
       maxHeight: 900,
-      minWidth: 200,
+      minWidth: 100,
       maxWidth: 600,
      ),
-    //  height: 300,
-    //  width: 200,
+     height: 150,
+     width: 100,
      decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(20),
-      border: Border.all(
-        color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
-        width: 2,
-      ),
+      boxShadow: [
+        BoxShadow(          
+          blurRadius: 15,
+          color: Colors.black.withOpacity(0.5),
+          offset: const Offset(0, 0),
+        ),
+      ]
+      // border: Border.all(
+      //   color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+      //   width: 2,
+      // ),
      ),
      child: ClipRRect(
        borderRadius: BorderRadius.circular(18),
-       child: isVideoOn 
+       child: isLocalVideoOn 
         ? AgoraVideoView(
           controller: VideoViewController(
             rtcEngine: _engine,
@@ -281,41 +316,3 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
   }
 }
 
-class VideoCallButton extends StatefulWidget {
-  VideoCallButton({
-    required this.iconOn,
-    required this.iconOff,
-    required this.isButtonOn,
-    required this.onTapFunc,
-  });
-  IconData iconOn;
-  IconData? iconOff;
-  var isButtonOn;
-  void Function()? onTapFunc;
-
-  @override
-  State<VideoCallButton> createState() => _VideoCallButtonState();
-}
-
-class _VideoCallButtonState extends State<VideoCallButton> {
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: widget.onTapFunc,
-      child: Container(
-        height: 35,
-        width: 35,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(100),
-          color: widget.isButtonOn ? Colors.white : Colors.grey,
-        ),
-        child: Icon(
-          widget.isButtonOn?
-          widget.iconOn : widget.iconOff,
-          size: 22,
-          color: Colors.black,
-        ),
-      ),
-    );
-  }
-}

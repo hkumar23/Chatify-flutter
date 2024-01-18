@@ -4,8 +4,8 @@ import 'package:chatify2/screens/addcontact_screen.dart';
 import 'package:chatify2/screens/contact_profile_screen.dart';
 import 'package:chatify2/screens/home_screen.dart';
 import 'package:chatify2/screens/login_screen.dart';
+import 'package:chatify2/screens/settings_screen.dart';
 import 'package:chatify2/screens/signup_screen.dart';
-import 'package:chatify2/screens/videocall_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -20,10 +20,12 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
   State<MyApp> createState() => _MyAppState();
 }
@@ -78,19 +80,20 @@ class _MyAppState extends State<MyApp> {
         home: StreamBuilder(
           stream: FirebaseAuth.instance.authStateChanges(), 
           builder: (ctx,userSnapshot){
-            if(userSnapshot.hasData){
+            if(userSnapshot.hasData){              
               return HomeScreen(themeBrightness,toggleTheme);
             }
-            return LoginScreen();
+            return const LoginScreen();
           },
           ),
         routes: {
           HomeScreen.routeName :(context) => HomeScreen(themeBrightness,toggleTheme),
           ChatScreen.routeName :(context) => ChatScreen(),
           AddContactScreen.routeName:(context) => AddContactScreen(),
-          LoginScreen.routeName: (context) => LoginScreen(),
+          LoginScreen.routeName: (context) => const LoginScreen(),
           SignupScreen.routeName: (context) => SignupScreen(),
           ContactProfileScreen.routeName: (context) => ContactProfileScreen(),
+          SettingsScreen.routeName: (context) => SettingsScreen(toggleTheme, themeBrightness)
         },
       ),
     );

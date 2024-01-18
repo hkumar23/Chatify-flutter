@@ -1,8 +1,10 @@
 import 'package:chatify2/providers/auth.dart';
 import 'package:chatify2/screens/addcontact_screen.dart';
+import 'package:chatify2/screens/settings_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
 class SideDrawer extends StatelessWidget {
@@ -27,11 +29,11 @@ class SideDrawer extends StatelessWidget {
                               fit: StackFit.expand,
                               children: [
                                 Opacity(
+                                  opacity: 0.2,
                                   child: Image.network(
                                     "https://i.pinimg.com/736x/47/d0/5e/47d05e4df9d0a034cc8f06ae1207ec67.jpg",
                                     fit: BoxFit.cover,
                                   ),
-                                  opacity: 0.2,
                                 ),
                                 Container(
                                   margin: const EdgeInsets.all(10),
@@ -117,45 +119,67 @@ class SideDrawer extends StatelessWidget {
                             width: double.infinity,
                             child: Column(
                               children: [
+                                // _listTileBuilder(
+                                //     context,
+                                //     Icons.home,
+                                //     "Home",
+                                //     (){ },
+                                //     null,
+                                //   ),
                                 _listTileBuilder(
-                                  context,
-                                  Icons.home,
-                                  "Home",
-                                  (){ },
-                                  ),
-                                _listTileBuilder(
-                                  context, 
-                                  Icons.account_circle,
-                                  "My Profile",
-                                  (){
-
-                                  },
-                                  ),
-                                _listTileBuilder(
-                                  context,
-                                  Icons.person_add,
-                                  "Add New Contact",
-                                  (){
-                                    Navigator.of(context).pushNamed(AddContactScreen.routeName);
-                                  },
+                                    context, 
+                                    Icons.account_circle,
+                                    "My Profile",
+                                    (){
+                                      
+                                    },
+                                    null
                                   ),
                                 _listTileBuilder(
-                                  context,
-                                  Icons.feedback, 
-                                  "Feedback",
-                                  (){},
+                                    context,
+                                    Icons.person_add,
+                                    "Add New Contact",
+                                    (){
+                                      Navigator.of(context).pushNamed(AddContactScreen.routeName);
+                                    },
+                                    null,
                                   ),
-                                  const SizedBox(
-                                    height:200,
+                                 _listTileBuilder(
+                                    context,
+                                    MdiIcons.tools,
+                                    "Tools",
+                                    (){
+                                      
+                                    },
+                                    null,
+                                  ), 
+                                _listTileBuilder(
+                                    context, 
+                                    Icons.settings,
+                                    "Settings",
+                                    (){
+                                      Navigator.of(context).pushNamed(SettingsScreen.routeName);
+                                    },
+                                    null
                                   ),
-                                Expanded(
-                                  child: _listTileBuilder(
+                                _listTileBuilder(
+                                    context,
+                                    Icons.feedback, 
+                                    "Feedback",
+                                    (){},
+                                    null,
+                                  ),
+                                const Expanded(child: SizedBox(),),
+                                _listTileBuilder(
                                     context,
                                     Icons.logout, 
                                     "Logout",                                                                      
-                                    (){Provider.of<Auth>(context,listen: false).logout(context);},
-                                    ),
-                                )
+                                    (){
+                                      Provider.of<Auth>(context,listen: false).logoutWithDialog(context);
+                                    },
+                                    Colors.redAccent,
+                                  ),
+                                const SizedBox(height: 10,)
                               ],
                             ),
                           ),
@@ -169,24 +193,25 @@ class SideDrawer extends StatelessWidget {
     BuildContext context,
     IconData iconData, 
     String titleText,
-    Function () _ontap,
+    Function () ontap,
+    Color? tileColor,
     ) {
     return Material(
                   color: Colors.transparent,
                   child: InkWell(
-                    onTap: _ontap,
+                    onTap: ontap,
                     splashColor: Colors.white.withOpacity(0.2),
                     child: ListTile(
                       contentPadding: const EdgeInsets.symmetric(horizontal: 40),
                       leading: Icon(
                         iconData,
-                        color: Theme.of(context).colorScheme.onSecondaryContainer,
+                        color: tileColor ?? Theme.of(context).colorScheme.onSecondaryContainer,
                         ),
                       title: Text(
                         titleText,
                         style: TextStyle(
                           fontSize: 16,
-                          color: Theme.of(context).colorScheme.onSecondaryContainer,
+                          color: tileColor ?? Theme.of(context).colorScheme.onSecondaryContainer,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
