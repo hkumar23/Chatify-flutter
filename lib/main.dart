@@ -1,7 +1,7 @@
 import 'package:chatify2/providers/auth.dart';
 import 'package:chatify2/providers/contacts_prov.dart';
 import 'package:chatify2/screens/addcontact_screen.dart';
-import 'package:chatify2/screens/contact_profile_screen.dart';
+import 'package:chatify2/screens/profile_screen.dart';
 import 'package:chatify2/screens/home_screen.dart';
 import 'package:chatify2/screens/login_screen.dart';
 import 'package:chatify2/screens/settings_screen.dart';
@@ -88,11 +88,10 @@ class _MyAppState extends State<MyApp> {
           ),
         routes: {
           HomeScreen.routeName :(context) => HomeScreen(themeBrightness,toggleTheme),
-          ChatScreen.routeName :(context) => ChatScreen(),
+          ChatScreen.routeName :(context) => const ChatScreen(),
           AddContactScreen.routeName:(context) => AddContactScreen(),
           LoginScreen.routeName: (context) => const LoginScreen(),
           SignupScreen.routeName: (context) => SignupScreen(),
-          ContactProfileScreen.routeName: (context) => ContactProfileScreen(),
           SettingsScreen.routeName: (context) => SettingsScreen(toggleTheme, themeBrightness)
         },
       ),

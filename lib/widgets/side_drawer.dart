@@ -1,5 +1,6 @@
 import 'package:chatify2/providers/auth.dart';
 import 'package:chatify2/screens/addcontact_screen.dart';
+import 'package:chatify2/screens/profile_screen.dart';
 import 'package:chatify2/screens/settings_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -131,7 +132,9 @@ class SideDrawer extends StatelessWidget {
                                     Icons.account_circle,
                                     "My Profile",
                                     (){
-                                      
+                                      Navigator.of(context).push(MaterialPageRoute(
+                                        builder: (context)=> ProfileScreen(currUser.uid)
+                                        ));
                                     },
                                     null
                                   ),

@@ -1,5 +1,6 @@
 import 'package:chatify2/providers/auth.dart';
 import 'package:chatify2/screens/home_screen.dart';
+import 'package:chatify2/screens/profile_screen.dart';
 import 'package:chatify2/widgets/side_drawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,7 +9,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatelessWidget {
-  static const routeName = '/profile-screen';
+  static const routeName = '/settings-screen';
   // File? userImage;
   SettingsScreen(
     this.toggleAppTheme,
@@ -28,7 +29,10 @@ class SettingsScreen extends StatelessWidget {
       resizeToAvoidBottomInset: false,
       // backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
       drawer: const SideDrawer(),
-      // appBar: AppBar(title: const Text("Profile")),
+      // appBar: AppBar(
+      //   title: const Text("Settings"),
+      //   backgroundColor: Colors.transparent,
+      //   ),
       body: Stack(
         children: [
           Container(
@@ -106,7 +110,13 @@ class SettingsScreen extends StatelessWidget {
                                   ListTile(
                                     leading: const Icon(Icons.account_circle),
                                     title: const Text("My Profile",style: TextStyle(fontWeight: FontWeight.bold),),
-                                    onTap: (){},
+                                    onTap: (){
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(builder: (context)=> ProfileScreen(
+                                            currUser.uid,
+                                          )
+                                        ));
+                                    },
                                   ),
                                   ListTile(
                                     leading: const Icon(Icons.edit),
@@ -199,7 +209,7 @@ class SettingsScreen extends StatelessWidget {
                                     title: const Text("Home",style: TextStyle(fontWeight: FontWeight.bold),),
                                     // trailing: const Icon(Icons.arrow_forward_ios_rounded),
                                     onTap: () {
-                                      Navigator.of(context).popUntil(ModalRoute.withName('/'));
+                                      // Navigator.of(context).popUntil(ModalRoute.withName('/'));
                                       Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
                                       // Navigator.of(context).pushNamed('/');    
                                     },

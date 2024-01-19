@@ -1,4 +1,4 @@
-import 'package:chatify2/screens/contact_profile_screen.dart';
+import 'package:chatify2/screens/profile_screen.dart';
 import 'package:chatify2/screens/videocall_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,6 +9,8 @@ import 'package:chatify2/widgets/chat/messages.dart';
 
 class ChatScreen extends StatelessWidget {
   static const routeName='/chat-screen';
+
+  const ChatScreen({super.key});
   // ChatScreen(
   //   this.themeBrightness,
   //   this.toggleTheme,
@@ -24,7 +26,7 @@ class ChatScreen extends StatelessWidget {
     String currentUserId=currUserSnapshot!.uid;
     List<String> userIds=[otherUserData['userId'],currentUserId];
     userIds.sort();
-    String chatId="${userIds[0]}_"+"${userIds[1]}";
+    String chatId="${userIds[0]}_${userIds[1]}";
     // print(otherUserData['userId']);
     // print(otherUserId);
     return Scaffold(
@@ -37,7 +39,11 @@ class ChatScreen extends StatelessWidget {
         // ),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: GestureDetector(
-          onTap: () => Navigator.of(context).pushNamed(ContactProfileScreen.routeName,arguments: otherUserData['userId']),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (context)=> ProfileScreen(
+              otherUserData['userId'],
+            ))
+          ),
           child: Container(
             // width: 200,
             color: Colors.transparent,
