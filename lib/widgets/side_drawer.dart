@@ -9,11 +9,13 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:provider/provider.dart';
 
 class SideDrawer extends StatelessWidget {
-  const SideDrawer({super.key});
+  SideDrawer(this.themeBrightness,{super.key});
+  Brightness themeBrightness;
 
   @override
   Widget build(BuildContext context) {
     final currUser=FirebaseAuth.instance.currentUser;
+
     return Drawer(            
             backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
             shape: const RoundedRectangleBorder(
@@ -30,11 +32,14 @@ class SideDrawer extends StatelessWidget {
                               fit: StackFit.expand,
                               children: [
                                 Opacity(
-                                  opacity: 0.2,
-                                  child: Image.network(
-                                    "https://i.pinimg.com/736x/47/d0/5e/47d05e4df9d0a034cc8f06ae1207ec67.jpg",
+                                  opacity: 0.4,
+                                  child: Image.asset(
+                                    color:Theme.of(context).colorScheme.primary,
+                                    colorBlendMode: themeBrightness == Brightness.light ?
+                                    BlendMode.screen : BlendMode.multiply, 
+                                    "assets/images/sidebar_background.jpg",
                                     fit: BoxFit.cover,
-                                  ),
+                                  )
                                 ),
                                 Container(
                                   margin: const EdgeInsets.all(10),

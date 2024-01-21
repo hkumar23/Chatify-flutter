@@ -132,7 +132,7 @@ class Auth with ChangeNotifier{
     }
   }
 
-  void resetPassword(String email,BuildContext context) async {
+  Future<void> resetPassword(String email,BuildContext context) async {
     try{
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
     } catch(err){
@@ -145,6 +145,27 @@ class Auth with ChangeNotifier{
           ))
         );
         rethrow;
+    }
+  }
+
+  Future<void> updateImage(File imageFile,String userId) async {
+    // print("updating image");
+    final sharedPreferences=await SharedPreferences.getInstance();
+    try{
+      final storageRef=FirebaseStorage.instance.ref().child("user_image").child("$userId.png");
+      await storageRef.delete();
+
+      await storageRef.putFile(imageFile);
+        
+      userImageUrl=await storageRef.getDownloadURL();
+      sharedPreferences.setString("image_url", userImageUrl!);
+
+      await FirebaseFirestore.instance.collection("users").doc(userId).update({
+        "image_url":userImageUrl,
+      });
+    }
+    catch(err){
+      rethrow;
     }
   }
 

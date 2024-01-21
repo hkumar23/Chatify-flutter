@@ -1,10 +1,15 @@
 import 'package:chatify2/providers/auth.dart';
 import 'package:chatify2/screens/home_screen.dart';
 import 'package:chatify2/screens/profile_screen.dart';
+import 'package:chatify2/utils/app_methods.dart';
 import 'package:chatify2/widgets/side_drawer.dart';
+import 'package:chatify2/widgets/upload_image_box.dart';
+import 'package:chatify2/widgets/user_image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -24,11 +29,12 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currUser=FirebaseAuth.instance.currentUser;
+    final auth=Provider.of<Auth>(context);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
       // backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-      drawer: const SideDrawer(),
+      drawer: SideDrawer(themeBrightness),
       // appBar: AppBar(
       //   title: const Text("Settings"),
       //   backgroundColor: Colors.transparent,
@@ -39,7 +45,7 @@ class SettingsScreen extends StatelessWidget {
             height: MediaQuery.of(context).size.height*0.45,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: const NetworkImage("https://cdn.wallpapersafari.com/56/84/YCLrBl.jpg"),
+                image: const AssetImage("assets/images/settings_background.jpg"),
                 fit: BoxFit.cover,
                 opacity: 0.5,
                 colorFilter: ColorFilter.mode(
@@ -51,7 +57,7 @@ class SettingsScreen extends StatelessWidget {
           Column(            
             children: [
               Flexible(
-                flex: 1,
+                flex: 4,
                 child: StreamBuilder(
                   stream: FirebaseFirestore.instance.collection("users").doc(currUser!.uid).snapshots(),
                   builder: (context, userSnapshot) {                    
@@ -83,23 +89,42 @@ class SettingsScreen extends StatelessWidget {
                         Text(
                           userData["username"],
                           style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                            color: Theme.of(context).colorScheme.onInverseSurface,
+                            color: Colors.white,
                             fontWeight: FontWeight.bold),
                           ),
                         Text(
                           userData["email"],
                           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                            color: Theme.of(context).colorScheme.onInverseSurface,
+                            color: Colors.white,
                             fontWeight: FontWeight.bold),),
                       ]);
                   }
                 ),                
               ),
-              Flexible(              
-                flex: 2,
+              Flexible(
+                flex: 1,
                 child: Container(
+                  // alignment: Alignment.center,
+                  margin: const EdgeInsets.only(left: 20,right: 20),
+                  width: double.infinity,
+                  // color: Colors.amber,     
+                  padding: const EdgeInsets.only(left: 5,top: 10),             
+                  child: Text(                    
+                    "Settings",
+                    style: GoogleFonts.oswald(
+                      color:Colors.lightBlueAccent,
+                      letterSpacing: 5,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    ),
+                  ),
+                ),
+              Flexible(              
+                flex: 7,
+                child: Container(                  
                   constraints: const BoxConstraints(minHeight: 300),                  
-                  margin: const EdgeInsets.all(20),
+                  margin: const EdgeInsets.only(left: 20,right: 20),
                   child: Card(                    
                           color: Theme.of(context).colorScheme.secondaryContainer,
                           child: SingleChildScrollView(
@@ -163,7 +188,42 @@ class SettingsScreen extends StatelessWidget {
                                     leading: const Icon(Icons.image),
                                     title: const Text("Change Profile Image",style: TextStyle(fontWeight: FontWeight.bold),),
                                     // trailing: const Icon(Icons.arrow_forward_ios_rounded),
-                                    onTap: (){},
+                                    onTap: (){
+                                      showDialog(
+                                        context: context,
+                                        builder: (context){
+                                          return AlertDialog(                                            
+                                            content: GestureDetector(
+                                                onTap: () async { 
+                                                  String contentVal;
+                                                  bool isUpdated=false;
+                                                  try{
+                                                    final pickedImage=await AppMethods.pickImage();
+                                                    auth.updateImage(pickedImage, currUser.uid);
+                                                    contentVal="Image Updated Successfully";
+                                                    isUpdated=true;
+                                                  }
+                                                  catch(err){
+                                                    contentVal=err.toString();
+                                                  }
+
+                                                  ScaffoldMessenger.of(context).showSnackBar(
+                                                      SnackBar(
+                                                        // action: SnackBarAction(label: "label",backgroundColor: Colors.amber,onPressed: (){},),
+                                                          content: Text(contentVal),
+                                                          backgroundColor: isUpdated ?
+                                                          Theme.of(context).colorScheme.primary :
+                                                          Theme.of(context).colorScheme.error,
+                                                        )
+                                                  );
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: const UploadImageBox(),
+                                              ),                                            
+                                          );
+                                        }
+                                      );
+                                    },
                                   ),                   
                                   ListTile(
                                     leading: const Icon(Icons.lock),
@@ -210,8 +270,9 @@ class SettingsScreen extends StatelessWidget {
                                     // trailing: const Icon(Icons.arrow_forward_ios_rounded),
                                     onTap: () {
                                       // Navigator.of(context).popUntil(ModalRoute.withName('/'));
-                                      Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+                                      // Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
                                       // Navigator.of(context).pushNamed('/');    
+                                      Navigator.of(context).pushNamedAndRemoveUntil(HomeScreen.routeName, (route) => false);
                                     },
                                   ),
                                   ListTile(

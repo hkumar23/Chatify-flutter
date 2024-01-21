@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:chatify2/providers/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -36,4 +39,14 @@ class AppMethods{
     }
   }
 
+  static Future<File> pickImage() async {
+    // print("Picking image");
+    final ImagePicker picker=ImagePicker();
+    final XFile? image=await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 50,
+      maxWidth: 150,
+      );
+    return File(image!.path);
+  }
 }

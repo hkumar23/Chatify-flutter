@@ -49,6 +49,7 @@ dependencies:
   http: ^1.1.2
   material_design_icons_flutter: ^7.0.7296
   shared_preferences: ^2.2.2
+  dotted_border: ^2.1.0
 
 dev_dependencies:
   flutter_test:
@@ -73,9 +74,11 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/images/Upload-PNG-Image-File.png
+    - assets/images/sidebar_background.jpg
+    - assets/images/settings_background.jpg
+    # - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

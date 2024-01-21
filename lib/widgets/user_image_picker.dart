@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:chatify2/utils/app_methods.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -12,22 +13,13 @@ class UserImagePicker extends StatefulWidget {
 
 class _UserImagePickerState extends State<UserImagePicker> {
   File? pickedImage;
-  void _pickImage() async {
-    final ImagePicker picker=ImagePicker();
-    final XFile? image=await picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 50,
-      maxWidth: 150,
-      );
-    setState(() {
-      pickedImage=File(image!.path);
-    });
-    widget.pickImagefn(pickedImage);
+  void _selectImage() async {
+    pickedImage=await AppMethods.pickImage();
   }
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: _pickImage,
+      onTap: _selectImage,
       child: Column(
         children: [
           Container(          

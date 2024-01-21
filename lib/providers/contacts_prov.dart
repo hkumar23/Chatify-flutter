@@ -6,22 +6,22 @@ class Contacts with ChangeNotifier{
   Future<bool> userExist({required String email}) async {
     bool userExist=false;
     var userSnap=await FirebaseFirestore.instance.collection("userEmails").get();
-    userSnap.docs.forEach((element) { 
+    for (var element in userSnap.docs) { 
       // print(element.id);
       if(element.id==email){
         userExist= true;
-      }});
+      }}
     return userExist;
   }
 
   Future<void> addContact(String email,String userId, String? contactId) async {
     try{
       var userSnap=await FirebaseFirestore.instance.collection("userEmails").get();
-      userSnap.docs.forEach((element) { 
+      for (var element in userSnap.docs) { 
         if(element.id==email){          
           contactId=element.data()["userid"];
         }
-      });
+      }
       // print(contactId);
       if(contactId==null){
         throw "User does not exist";
@@ -50,12 +50,12 @@ class Contacts with ChangeNotifier{
           throw "Contact already exists";
         }
         await userDocRef.update({
-          contactId!:true,
+          contactId:true,
         });
       }
       else{
         await userDocRef.set({
-          contactId!:true,
+          contactId:true,
         }); 
       }
 
