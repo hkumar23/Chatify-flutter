@@ -1,4 +1,3 @@
-import 'package:chatify2/providers/auth.dart';
 import 'package:chatify2/screens/addcontact_screen.dart';
 import 'package:chatify2/screens/chat_screen.dart';
 import 'package:chatify2/utils/app_methods.dart';
@@ -9,8 +8,6 @@ import 'package:flutter/material.dart';
 
 import 'package:chatify2/widgets/contact_item.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
-
 class HomeScreen extends StatefulWidget {
   static const routeName = '/home-screen';
   
@@ -133,11 +130,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       return ListView.builder(
                           itemCount: usersData.length,
                           itemBuilder: (ctx,index){
-                            // print(currentUser!.uid);                          
+                            // print(currentUser!.uid);
+                            String contactName=usersData[index]["username"];
+                            if(currentUser!.uid == usersData[index].id){
+                              contactName+=" (Myself)";
+                            }       
+
                             return contactList!.containsKey(usersData[index].id) ?
                             ContactItem(
                               usersData[index]["image_url"],
-                              usersData[index]["username"],
+                              contactName,
                               usersData[index]["email"],
                               (){
                                 Navigator.of(context).pushNamed(ChatScreen.routeName,arguments: {

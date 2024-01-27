@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -8,14 +7,15 @@ class MessageBubble extends StatelessWidget {
   final DateTime chatDateTime;
   final String _message;
   final bool isMe;
+  @override
   final Key? key;
-    MessageBubble(
+    const MessageBubble(
     this._message,
     this.isMe,
     this.userImage,
     this.userName,
     this.chatDateTime,
-    {this.key}
+    {super.key, this.key}
     );
 
   @override

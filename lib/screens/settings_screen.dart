@@ -1,12 +1,12 @@
+import 'dart:io';
+
 import 'package:chatify2/providers/auth.dart';
 import 'package:chatify2/screens/home_screen.dart';
 import 'package:chatify2/screens/profile_screen.dart';
 import 'package:chatify2/utils/app_methods.dart';
 import 'package:chatify2/widgets/side_drawer.dart';
 import 'package:chatify2/widgets/upload_image_box.dart';
-import 'package:chatify2/widgets/user_image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dotted_border/dotted_border.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -25,11 +25,39 @@ class SettingsScreen extends StatelessWidget {
   void Function() toggleAppTheme;
 
   final _updateNameController = TextEditingController();
+  void changeImageFn(var auth,String userId,BuildContext context) async { 
+      String contentVal;
+      bool isUpdated=false;
+      File? pickedImage;
+      try{
+        pickedImage=await AppMethods.pickImage();
+        auth.updateImage(pickedImage, userId);
+        contentVal="Image Updated Successfully";
+        isUpdated=true;
+      }
+      catch(err){
+        if(pickedImage==null){
+          contentVal="Image not selected";
+        }
+        else{
+          contentVal=err.toString();
+        }
+      }
 
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          // action: SnackBarAction(label: "label",backgroundColor: Colors.amber,onPressed: (){},),
+          content: Text(contentVal),
+          backgroundColor: isUpdated ?
+          Theme.of(context).colorScheme.primary :
+          Theme.of(context).colorScheme.error,
+        )
+      );
+      Navigator.of(context).pop();
+  }
   @override
   Widget build(BuildContext context) {
     final currUser=FirebaseAuth.instance.currentUser;
-    final auth=Provider.of<Auth>(context);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -157,9 +185,12 @@ class SettingsScreen extends StatelessWidget {
                                               "Choose a New Name",
                                               style: Theme.of(context).textTheme.headlineSmall,
                                               ),
-                                            content: TextField(
+                                            content: TextField(                                                        
                                                         controller: _updateNameController,
-                                                        decoration: const InputDecoration(border: OutlineInputBorder()),                                              
+                                                        decoration: const InputDecoration(
+                                                          label: Text("Enter New Name"),
+                                                          border: OutlineInputBorder(),
+                                                          ),                                              
                                                       ),
                                             actions: [
                                               OutlinedButton(
@@ -167,15 +198,10 @@ class SettingsScreen extends StatelessWidget {
                                                 child: const Text("Close"),
                                                 ),
                                               FilledButton(
-                                                  onPressed: () async {
-                                                    await FirebaseFirestore.instance.collection("users").doc(currUser.uid).update({"username":_updateNameController.text.trim()});                                                    
-                                                    Navigator.of(context).pop();
-                                                    ScaffoldMessenger.of(context).showSnackBar(                                                      
-                                                      SnackBar(
-                                                        backgroundColor: Theme.of(context).colorScheme.primary,
-                                                        content: const Text("Information Updated")),
-                                                    );
-                                                  }, 
+                                                  onPressed: ()=> AppMethods.updateName(
+                                                    newName: _updateNameController.text, 
+                                                    userId: currUser.uid, 
+                                                    context: context),
                                                   child: const Text("Update"),
                                                 ),                                              
                                             ],                                         
@@ -194,30 +220,11 @@ class SettingsScreen extends StatelessWidget {
                                         builder: (context){
                                           return AlertDialog(                                            
                                             content: GestureDetector(
-                                                onTap: () async { 
-                                                  String contentVal;
-                                                  bool isUpdated=false;
-                                                  try{
-                                                    final pickedImage=await AppMethods.pickImage();
-                                                    auth.updateImage(pickedImage, currUser.uid);
-                                                    contentVal="Image Updated Successfully";
-                                                    isUpdated=true;
-                                                  }
-                                                  catch(err){
-                                                    contentVal=err.toString();
-                                                  }
-
-                                                  ScaffoldMessenger.of(context).showSnackBar(
-                                                      SnackBar(
-                                                        // action: SnackBarAction(label: "label",backgroundColor: Colors.amber,onPressed: (){},),
-                                                          content: Text(contentVal),
-                                                          backgroundColor: isUpdated ?
-                                                          Theme.of(context).colorScheme.primary :
-                                                          Theme.of(context).colorScheme.error,
-                                                        )
-                                                  );
-                                                  Navigator.of(context).pop();
-                                                },
+                                                onTap: ()=> changeImageFn(
+                                                  Provider.of<Auth>(context,listen: false),
+                                                  currUser.uid,
+                                                  context
+                                                  ),
                                                 child: const UploadImageBox(),
                                               ),                                            
                                           );
@@ -229,7 +236,7 @@ class SettingsScreen extends StatelessWidget {
                                     leading: const Icon(Icons.lock),
                                     title: const Text("Change Password",style: TextStyle(fontWeight: FontWeight.bold),),
                                     // trailing: const Icon(Icons.arrow_forward_ios_rounded),
-                                    onTap: (){
+                                    onTap: (){ 
                                       showDialog(
                                         context: context, 
                                         builder: (BuildContext context){

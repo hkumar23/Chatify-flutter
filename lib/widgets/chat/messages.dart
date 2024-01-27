@@ -1,10 +1,9 @@
 import 'package:chatify2/widgets/chat/message_bubble.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Messages extends StatelessWidget {
-  Messages(this.otherUserId,this.chatId,this.currentUserId);
+  const Messages(this.otherUserId,this.chatId,this.currentUserId, {super.key});
   final String otherUserId;
   final String chatId;
   final currentUserId;

@@ -1,7 +1,7 @@
 import 'package:chatify2/providers/auth.dart';
 import 'package:chatify2/providers/contacts_prov.dart';
 import 'package:chatify2/screens/addcontact_screen.dart';
-import 'package:chatify2/screens/profile_screen.dart';
+import 'package:chatify2/screens/welcome_screen.dart';
 import 'package:chatify2/screens/home_screen.dart';
 import 'package:chatify2/screens/login_screen.dart';
 import 'package:chatify2/screens/settings_screen.dart';
@@ -83,7 +83,7 @@ class _MyAppState extends State<MyApp> {
             if(userSnapshot.hasData){              
               return HomeScreen(themeBrightness,toggleTheme);
             }
-            return const LoginScreen();
+            return const AuthScreen();
           },
           ),
         routes: {
@@ -92,7 +92,8 @@ class _MyAppState extends State<MyApp> {
           AddContactScreen.routeName:(context) => AddContactScreen(),
           LoginScreen.routeName: (context) => const LoginScreen(),
           SignupScreen.routeName: (context) => SignupScreen(),
-          SettingsScreen.routeName: (context) => SettingsScreen(toggleTheme, themeBrightness)
+          SettingsScreen.routeName: (context) => SettingsScreen(toggleTheme, themeBrightness),
+          AuthScreen.routeName: (context) => const AuthScreen(),
         },
       ),
     );
