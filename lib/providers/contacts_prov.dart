@@ -65,5 +65,7 @@ class Contacts with ChangeNotifier{
       // print(err);
       rethrow;
     }
+    notifyListeners();
   }
+
 }

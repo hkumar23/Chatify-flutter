@@ -5,26 +5,54 @@ import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Auth with ChangeNotifier{
   String? userEmail;
-  String? userName;
+  String? fName;
+  String? lName;
   String? userId;
-  String? userImageUrl;
+  String? imageUrl;
+  String? about;
+  Map<String,String>? address = {
+      "state":"",
+      "city":"",
+      "pincode":"",
+      "street":"",
+    };
+  String? profession;
+  Map<String,String>? socialMediaLinks={
+      "github":"",
+      "instagram":"",
+      "linkedin":"",
+      "twitter":"",
+    };
+  String? techSkills;
+
   Auth({
     this.userEmail,
-    this.userName,
+    this.fName,
+    this.lName,
     this.userId,
-    this.userImageUrl,
+    this.imageUrl,
+    this.about,
+    this.address,
+    this.profession,
+    this.socialMediaLinks,
+    this.techSkills,
   });
 
   void logout(BuildContext context){
     FirebaseAuth.instance.signOut();
     userEmail=null;
-    userName=null;
-    userId=null;
-    userImageUrl=null;
+    fName=null;
+    lName=null;
+    imageUrl=null;
+    about=null;
+    address=null;
+    profession=null;
+    socialMediaLinks=null;
+    techSkills=null;
+    
     Navigator.of(context).popUntil(ModalRoute.withName('/'));
     Navigator.of(context).pushNamed('/');
   }
@@ -58,13 +86,12 @@ class Auth with ChangeNotifier{
     required BuildContext context,
     required String? email,
     required String? password,
-    String? username,
-    File? image,
+    File? userImageFile,
+    userData,
     bool isLogin=true,
   }) async {
 
     final auth=FirebaseAuth.instance;
-    final sharedPreferences=await SharedPreferences.getInstance();
     // print("Auth Started");
     try{
       if(isLogin){
@@ -78,13 +105,15 @@ class Auth with ChangeNotifier{
         final fethedUserdata=await FirebaseFirestore.instance.collection("users").doc(userId).get();
         final userData=fethedUserdata.data();
 
-        // userEmail=userData!["email"];
-        // userImageUrl=userData["image_url"];
-        // userName=userData["username"];
-        sharedPreferences.setString("userId", userId!);
-        sharedPreferences.setString("email", userData!["email"]);
-        sharedPreferences.setString("image_url", userData["image_url"]);
-        sharedPreferences.setString("username", userData["username"]);
+        userEmail=userData!["email"];
+        fName=userData["fName"];
+        lName=userData["lName"];
+        imageUrl=userData["imageUrl"];
+        about=userData["about"];
+        address=userData["address"];
+        profession=userData["profession"];
+        socialMediaLinks=userData["socialMediaLinks"];
+        techSkills=userData["techSkills"];
         // print("$userEmail+$userImageUrl+$username");
       }
       else{
@@ -95,25 +124,30 @@ class Auth with ChangeNotifier{
         userId=authResult.user!.uid;
 
         final ref=FirebaseStorage.instance.ref().child("user_image").child('${userId!}.png');
-        await ref.putFile(image!);
+        await ref.putFile(userImageFile!);
         
-        userImageUrl=await ref.getDownloadURL();
-        
-        await FirebaseFirestore.instance.collection("users").doc(authResult.user!.uid).set(
-              {
-              'email':email,
-              'username':username,
-              'image_url':userImageUrl,
-            });
+        imageUrl=await ref.getDownloadURL();
+        userData["imageUrl"]=imageUrl;
+
+        await FirebaseFirestore.instance.collection("users").doc(authResult.user!.uid).set(userData);
         
         await FirebaseFirestore.instance.collection("userEmails").doc(email).set({
           'userid':userId,
         });
         
-        sharedPreferences.setString("userId", userId!);
-        sharedPreferences.setString("email", email);
-        sharedPreferences.setString("image_url", userImageUrl!);
-        sharedPreferences.setString("username", username!);
+        userEmail=userData!["email"];
+        fName=userData["fName"];
+        lName=userData["lName"];
+        about=userData["about"];
+        address=userData["address"];
+        profession=userData["profession"];
+        socialMediaLinks=userData["socialMediaLinks"];
+        techSkills=userData["techSkills"];
+        // sharedPreferences.setString("userId", userId!);
+        // sharedPreferences.setString("email", email);
+        // sharedPreferences.setString("image_url", userImageUrl!);
+        // sharedPreferences.setString("fName", fName!);
+        // sharedPreferences.setString("lName", lName!);
       }
     }on FirebaseException catch(err){
       // print("PlatformException");
@@ -150,23 +184,20 @@ class Auth with ChangeNotifier{
 
   Future<void> updateImage(File imageFile,String userId) async {
     // print("updating image");
-    final sharedPreferences=await SharedPreferences.getInstance();
     try{
       final storageRef=FirebaseStorage.instance.ref().child("user_image").child("$userId.png");
       await storageRef.delete();
 
       await storageRef.putFile(imageFile);
         
-      userImageUrl=await storageRef.getDownloadURL();
-      sharedPreferences.setString("image_url", userImageUrl!);
+      imageUrl=await storageRef.getDownloadURL();
 
       await FirebaseFirestore.instance.collection("users").doc(userId).update({
-        "image_url":userImageUrl,
+        "imageUrl":imageUrl,
       });
     }
     catch(err){
       rethrow;
     }
   }
-
 }

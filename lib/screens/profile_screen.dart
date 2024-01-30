@@ -35,6 +35,7 @@ class ProfileScreen extends StatelessWidget {
             return const Center(child: CircularProgressIndicator(),);
           }
           else{
+            final fullName=userData!["fName"]+" "+userData["lName"];
             return Stack(
               children: [
                 Container(
@@ -42,7 +43,7 @@ class ProfileScreen extends StatelessWidget {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: NetworkImage(userData!["image_url"]),
+                      image: NetworkImage(userData["imageUrl"]),
                       fit: BoxFit.cover,
                       alignment: Alignment.center,
                       )
@@ -85,7 +86,7 @@ class ProfileScreen extends StatelessWidget {
                                 Padding(
                                   padding: const EdgeInsets.only(left: 30,right: 30,top: 10),
                                   child: Text(
-                                        userData["username"],
+                                        fullName,
                                         style: GoogleFonts.raleway(
                                           fontSize: Theme.of(context).textTheme.displayLarge!.fontSize,
                                           fontWeight: FontWeight.w700,
@@ -210,14 +211,7 @@ class ProfileScreen extends StatelessWidget {
                                           fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize,
                                         ),
                                       ),
-                                      const SizedBox(height: 15,),
-                                      Text(
-                                        "Projects",
-                                        style: GoogleFonts.notoSans(
-                                          fontSize: Theme.of(context).textTheme.headlineMedium!.fontSize,
-                                          fontWeight: FontWeight.bold,                                        
-                                        ),
-                                      ),
+                                      const SizedBox(height: 15,),                                      
                                       StreamBuilder(
                                         stream: FirebaseFirestore.instance.collection("users").doc(userId).collection("projects").snapshots(),
                                         builder: (context, projectsSnap) {
@@ -228,7 +222,7 @@ class ProfileScreen extends StatelessWidget {
                                             return const Text("Some error occured in loading projects");
                                           }
                                           final projectDocs=projectsSnap.data!.docs;
-                                          if(projectsSnap.hasData){
+                                          if(projectDocs.isNotEmpty){
                                               List<ProjectItem> list=[];
                                               for(int i=0; i<projectDocs.length; ++i){
                                                 list.add(
@@ -239,7 +233,19 @@ class ProfileScreen extends StatelessWidget {
                                                 );
                                               }
                                               return Column(
-                                                children: list,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    "Projects",
+                                                    style: GoogleFonts.notoSans(
+                                                      fontSize: Theme.of(context).textTheme.headlineMedium!.fontSize,
+                                                      fontWeight: FontWeight.bold,                                        
+                                                    ),
+                                                  ),
+                                                  Column(
+                                                    children: list,
+                                                  ),
+                                                ],
                                               );
                                           }                                          
                                           return const SizedBox();

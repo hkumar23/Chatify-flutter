@@ -1,11 +1,11 @@
 import 'package:chatify2/providers/auth.dart';
 import 'package:chatify2/providers/contacts_prov.dart';
 import 'package:chatify2/screens/addcontact_screen.dart';
-import 'package:chatify2/screens/welcome_screen.dart';
+import 'package:chatify2/screens/authentication/welcome_screen.dart';
 import 'package:chatify2/screens/home_screen.dart';
-import 'package:chatify2/screens/login_screen.dart';
+import 'package:chatify2/screens/authentication/login_screen.dart';
 import 'package:chatify2/screens/settings_screen.dart';
-import 'package:chatify2/screens/signup_screen.dart';
+import 'package:chatify2/screens/authentication/signup_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -91,7 +91,7 @@ class _MyAppState extends State<MyApp> {
           ChatScreen.routeName :(context) => const ChatScreen(),
           AddContactScreen.routeName:(context) => AddContactScreen(),
           LoginScreen.routeName: (context) => const LoginScreen(),
-          SignupScreen.routeName: (context) => SignupScreen(),
+          SignupScreen.routeName: (context) => const SignupScreen(),
           SettingsScreen.routeName: (context) => SettingsScreen(toggleTheme, themeBrightness),
           AuthScreen.routeName: (context) => const AuthScreen(),
         },

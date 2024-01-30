@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
 class ContactItem extends StatelessWidget {
-  ContactItem(
-    this.imageUrl,
-    this.userName,
-    this.userEmail,
-    this.navigateToChat,
-    );
+  const ContactItem({super.key, 
+    required this.imageUrl,
+    required this.userName,
+    required this.userEmail,
+    required this.navigateToChat,
+  });
   final String imageUrl;
   final String userName;
   final String userEmail;
   final void Function() navigateToChat;
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
                 // height: 70,
                 width: double.infinity,
                 // margin: const EdgeInsets.only(top: 5),

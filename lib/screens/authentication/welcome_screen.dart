@@ -1,8 +1,7 @@
-import 'package:chatify2/screens/login_screen.dart';
-import 'package:chatify2/screens/signup_screen.dart';
+import 'package:chatify2/screens/authentication/login_screen.dart';
+import 'package:chatify2/screens/authentication/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class AuthScreen extends StatelessWidget {
   static const routeName='/auth-screen';
@@ -88,7 +87,7 @@ class AuthScreen extends StatelessWidget {
                     padding: EdgeInsets.all(4),
                     child: Text("Or"),
                   ),
-                  ElevatedButton(                                    
+                  ElevatedButton(                                  
                     onPressed: (){},
                     style: ButtonStyle(
                       maximumSize: const MaterialStatePropertyAll(Size(500,50)),

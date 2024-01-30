@@ -171,7 +171,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(Provider.of<Auth>(context).userImageUrl);
+    print(Provider.of<Auth>(context).imageUrl);
     return Scaffold(
       body: Stack(
         children: [

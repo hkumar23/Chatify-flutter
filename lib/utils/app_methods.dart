@@ -9,18 +9,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AppMethods{
-  static Future<void> getUserDataFromLocalStorage(BuildContext context) async {
-    // print("fetching user data");
-    final auth=Provider.of<Auth>(context,listen: false);
-    final sharedPreferences=await SharedPreferences.getInstance();
+  // static Future<void> getUserDataFromLocalStorage(BuildContext context) async {
+  //   // print("fetching user data");
+  //   final auth=Provider.of<Auth>(context,listen: false);
+  //   final sharedPreferences=await SharedPreferences.getInstance();
 
-    auth.userId=sharedPreferences.getString("userId");
-    auth.userName=sharedPreferences.getString("username");
-    auth.userEmail=sharedPreferences.getString("email");
-    auth.userImageUrl=sharedPreferences.getString("image_url");
+  //   auth.userId=sharedPreferences.getString("userId");
+  //   auth.userName=sharedPreferences.getString("username");
+  //   auth.userEmail=sharedPreferences.getString("email");
+  //   auth.userImageUrl=sharedPreferences.getString("image_url");
 
-    // print(sharedPreferences.getString("userId"));
-  }
+  //   // print(sharedPreferences.getString("userId"));
+  // }
 
   static Future<Map<String,dynamic>?> fetchUserDataFromServer(String userId,BuildContext context) async {
     try{
@@ -54,17 +54,18 @@ class AppMethods{
   }
 
   static void updateName({
-    required String newName,
+    required String fName,
+    required String lName,
     required String userId, 
     required BuildContext context}) async {
 
     String labelVal;
     bool isUpdated=false;
     try{
-      if(newName==""){
+      if(fName=="" && lName==""){
         throw "Enter a valid name, please.";
       }
-      await FirebaseFirestore.instance.collection("users").doc(userId).update({"username":newName.trim()});                                                    
+      await FirebaseFirestore.instance.collection("users").doc(userId).update({"fName":fName.trim(),"lName":lName});                                                    
       labelVal="Name successfully updated.";    
       isUpdated=true;                                                  
     }

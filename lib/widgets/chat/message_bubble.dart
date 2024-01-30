@@ -2,20 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class MessageBubble extends StatelessWidget {
-  final String userImage;
-  final String userName;
   final DateTime chatDateTime;
   final String _message;
   final bool isMe;
   @override
-  final Key? key;
+  // final Key? key;
     const MessageBubble(
     this._message,
     this.isMe,
-    this.userImage,
-    this.userName,
     this.chatDateTime,
-    {super.key, this.key}
+    {super.key}
     );
 
   @override

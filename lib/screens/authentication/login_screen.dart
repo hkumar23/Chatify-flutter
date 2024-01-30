@@ -1,5 +1,5 @@
 import 'package:chatify2/providers/auth.dart';
-import 'package:chatify2/screens/signup_screen.dart';
+import 'package:chatify2/screens/authentication/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

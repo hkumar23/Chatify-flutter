@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class NewMessage extends StatefulWidget {
-  final String otherUserId;
-  const NewMessage(this.otherUserId);
+  final String chatId;
+  const NewMessage( this.chatId, {super.key});
   @override
   State<NewMessage> createState() => _NewMessageState();
 }
@@ -26,16 +26,12 @@ class _NewMessageState extends State<NewMessage> {
     var currentUser=FirebaseAuth.instance.currentUser;
     var userSnapshot= await FirebaseFirestore.instance.collection('users').doc(currentUser!.uid).get();
 
-    List<String> otherUserIds=[widget.otherUserId,currentUser.uid];
-    otherUserIds.sort();
-    String chatId="${otherUserIds[0]}_"+"${otherUserIds[1]}";
-    // print(userSnapshot["username"]);
-    FirebaseFirestore.instance.collection('chats').doc(chatId).collection('messages').add({
+    FirebaseFirestore.instance.collection('chats').doc(widget.chatId).collection('messages').add({
       "text":_enteredMessage,
       "createdOn":Timestamp.now(),
       "userId":currentUser.uid,
-      "userName":userSnapshot["username"],
-      "userImage":userSnapshot["image_url"],
+      "fName":userSnapshot["fName"],
+      "lName":userSnapshot["lName"],
     });
     setState(() {           
       _enteredMessage="";
@@ -80,21 +76,6 @@ class _NewMessageState extends State<NewMessage> {
               controller: _controller,
             ),
           ),
-          // Container(
-          //   margin: const EdgeInsets.all(5),
-          //   padding: const EdgeInsets.all(5),        
-          //   decoration: BoxDecoration(
-          //     borderRadius: const BorderRadius.all(Radius.circular(50)),
-          //     color: Theme.of(context).colorScheme.inversePrimary),
-          //   child: IconButton(
-          //     iconSize: 30,
-          //     icon: Icon(
-          //       Icons.send,
-          //       color: Theme.of(context).colorScheme.onSurface,
-          //       ),
-          //     onPressed: _enteredMessage.trim().isEmpty ? null : _sendMessage,
-          //     ),
-          // ),
         ],
       ),
     );

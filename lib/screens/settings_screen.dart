@@ -24,7 +24,9 @@ class SettingsScreen extends StatelessWidget {
   Brightness themeBrightness;
   void Function() toggleAppTheme;
 
-  final _updateNameController = TextEditingController();
+  final _fNameController = TextEditingController();
+  final _lNameController = TextEditingController();
+
   void changeImageFn(var auth,String userId,BuildContext context) async { 
       String contentVal;
       bool isUpdated=false;
@@ -93,7 +95,8 @@ class SettingsScreen extends StatelessWidget {
                     if(userSnapshot.connectionState == ConnectionState.waiting ||
                     userData==null){
                       return const Center(child: CircularProgressIndicator(),);
-                    }                    
+                    }     
+                    final fullName=userData["fName"]+" "+userData["lName"];               
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -110,12 +113,12 @@ class SettingsScreen extends StatelessWidget {
                           ),
                           child: CircleAvatar(                      
                             radius: 70,
-                            backgroundImage: NetworkImage(userData["image_url"]),
+                            backgroundImage: NetworkImage(userData["imageUrl"]),
                           ),
                         ),
                         const SizedBox(height: 5,),
                         Text(
-                          userData["username"],
+                          fullName,
                           style: Theme.of(context).textTheme.headlineLarge!.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold),
@@ -185,23 +188,40 @@ class SettingsScreen extends StatelessWidget {
                                               "Choose a New Name",
                                               style: Theme.of(context).textTheme.headlineSmall,
                                               ),
-                                            content: TextField(                                                        
-                                                        controller: _updateNameController,
-                                                        decoration: const InputDecoration(
-                                                          label: Text("Enter New Name"),
-                                                          border: OutlineInputBorder(),
-                                                          ),                                              
-                                                      ),
+                                            content: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                TextField(                                                        
+                                                    controller: _fNameController,
+                                                    decoration: const InputDecoration(
+                                                      label: Text("First Name"),
+                                                      border: OutlineInputBorder(),
+                                                      ),                                              
+                                                  ),
+                                                const SizedBox(height: 10,),
+                                                TextField(
+                                                    controller: _lNameController,
+                                                    decoration: const InputDecoration(
+                                                      label: Text("Last Name"),
+                                                      border: OutlineInputBorder(),
+                                                      ), 
+                                                )
+                                              ],
+                                            ),
                                             actions: [
                                               OutlinedButton(
                                                 onPressed: () => Navigator.of(context).pop(),
                                                 child: const Text("Close"),
                                                 ),
                                               FilledButton(
-                                                  onPressed: ()=> AppMethods.updateName(
-                                                    newName: _updateNameController.text, 
-                                                    userId: currUser.uid, 
-                                                    context: context),
+                                                  onPressed: (){
+                                                    return AppMethods.updateName(
+                                                      fName: _fNameController.text,
+                                                      lName:_lNameController.text, 
+                                                      userId: currUser.uid, 
+                                                      context: context
+                                                      );
+                                                  },
                                                   child: const Text("Update"),
                                                 ),                                              
                                             ],                                         

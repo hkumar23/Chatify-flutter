@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:chatify2/misc/appconstants.dart';
 import 'package:chatify2/utils/app_methods.dart';
 import 'package:flutter/material.dart';
 
@@ -12,8 +13,11 @@ class UserImagePicker extends StatefulWidget {
 
 class _UserImagePickerState extends State<UserImagePicker> {
   File? pickedImage;
-  void _selectImage() async {
-    pickedImage=await AppMethods.pickImage();
+  void  _selectImage() async {
+      pickedImage=await AppMethods.pickImage();
+      setState(() {
+        widget.pickImagefn(pickedImage);
+      });
   }
   @override
   Widget build(BuildContext context) {
@@ -21,7 +25,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
       onTap: _selectImage,
       child: Column(
         children: [
-          Container(          
+          Container(      
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(50)),
               boxShadow: [BoxShadow(
@@ -36,7 +40,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
                       backgroundImage: 
                       pickedImage!=null ? 
                       FileImage(pickedImage!) : 
-                      const NetworkImage("https://images.nightcafe.studio//assets/profile.png?tr=w-640,c-at_max") as ImageProvider,
+                      const NetworkImage(AppConstants.blankProfileImage) as ImageProvider,
                     ),
           ),
           const SizedBox(height: 5),

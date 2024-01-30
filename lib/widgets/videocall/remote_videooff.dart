@@ -9,7 +9,7 @@ class RemoteVideoOff extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Auth auth = Provider.of<Auth>(context);
-    print(Provider.of<Auth>(context).userImageUrl);
+    print(Provider.of<Auth>(context).imageUrl);
     return Container(
       color: Theme.of(context).colorScheme.secondaryContainer,
       height: double.infinity,
@@ -19,7 +19,7 @@ class RemoteVideoOff extends StatelessWidget {
         children: [
           // const SizedBox(height: 50,),
           CircleAvatar(
-            backgroundImage: NetworkImage(auth.userImageUrl!),
+            backgroundImage: NetworkImage(auth.imageUrl!),
             radius: 100,          
           ),
           const SizedBox(height: 10,),
@@ -31,7 +31,7 @@ class RemoteVideoOff extends StatelessWidget {
             ),
           // const SizedBox(height: 5,),
           Text(
-            auth.userName!,
+            auth.fName!,
             style: Theme.of(context).textTheme.displayMedium!.copyWith(
               fontWeight: FontWeight.w500
             ),            

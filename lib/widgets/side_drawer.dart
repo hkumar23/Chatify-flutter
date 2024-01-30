@@ -57,6 +57,7 @@ class SideDrawer extends StatelessWidget {
                                       userData==null){
                                         return const Center(child: CircularProgressIndicator(),);
                                       }
+                                      String fullName=userData["fName"]+" "+userData["lName"];
                                       return Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
@@ -72,7 +73,7 @@ class SideDrawer extends StatelessWidget {
                                             child: CircleAvatar(
                                               radius: 40,
                                               backgroundImage: NetworkImage(
-                                                userData["image_url"],
+                                                userData["imageUrl"],
                                                 ),
                                             ),
                                           ),
@@ -80,7 +81,7 @@ class SideDrawer extends StatelessWidget {
                                           //   height: 7,
                                           // ),
                                           Text(
-                                            userData["username"],
+                                            fullName,
                                             style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                                               // color: Theme.of(context).colorScheme.onSecondaryContainer,
                                               fontWeight: FontWeight.bold,

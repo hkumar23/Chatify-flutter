@@ -6,7 +6,7 @@ class Messages extends StatelessWidget {
   const Messages(this.otherUserId,this.chatId,this.currentUserId, {super.key});
   final String otherUserId;
   final String chatId;
-  final currentUserId;
+  final String currentUserId;
   @override
   Widget build(BuildContext context) {
     // var userSnapshot;
@@ -34,13 +34,11 @@ class Messages extends StatelessWidget {
           itemCount: chatDocs.length,
           itemBuilder: (ctx,index){
             Timestamp chatTimeStamp=chatDocs[index]["createdOn"];
-            return 
             // Text(userSnapshot.uid);
+            return 
             MessageBubble(
               chatDocs[index]["text"],
               chatDocs[index]["userId"]==currentUserId,
-              chatDocs[index]["userImage"],
-              chatDocs[index]["userName"],
               chatTimeStamp.toDate(),
               key: ValueKey(chatDocs[index].id),
               );

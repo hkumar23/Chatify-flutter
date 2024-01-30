@@ -26,8 +26,6 @@ class ChatScreen extends StatelessWidget {
     List<String> userIds=[otherUserData['userId'],currentUserId];
     userIds.sort();
     String chatId="${userIds[0]}_${userIds[1]}";
-    // print(otherUserData['userId']);
-    // print(otherUserId);
     return Scaffold(
       appBar: AppBar(
         // leading: null,
@@ -40,7 +38,7 @@ class ChatScreen extends StatelessWidget {
         title: GestureDetector(
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (context)=> ProfileScreen(
-              otherUserData['userId'],
+              otherUserData["userId"],
             ))
           ),
           child: Container(
@@ -91,7 +89,7 @@ class ChatScreen extends StatelessWidget {
         child: Column(
           children: [
             Expanded(child: Messages(otherUserData['userId'],chatId,currentUserId)),
-            NewMessage(otherUserData['userId']),
+            NewMessage(chatId),
           ],
         ),
       ),

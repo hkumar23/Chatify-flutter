@@ -40,9 +40,9 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void fetchData(BuildContext context) async {
-    await AppMethods.getUserDataFromLocalStorage(context);
-  }
+  // void fetchData(BuildContext context) async {
+  //   await AppMethods.getUserDataFromLocalStorage(context);
+  // }
 
   @override
   void initState() {
@@ -50,11 +50,11 @@ class _HomeScreenState extends State<HomeScreen> {
     fetchContactsList();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    fetchData(context);
-  }
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   fetchData(context);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -131,24 +131,25 @@ class _HomeScreenState extends State<HomeScreen> {
                           itemCount: usersData.length,
                           itemBuilder: (ctx,index){
                             // print(currentUser!.uid);
-                            String contactName=usersData[index]["username"];
-                            if(currentUser!.uid == usersData[index].id){
-                              contactName+=" (Myself)";
-                            }       
-
-                            return contactList!.containsKey(usersData[index].id) ?
-                            ContactItem(
-                              usersData[index]["image_url"],
-                              contactName,
-                              usersData[index]["email"],
-                              (){
-                                Navigator.of(context).pushNamed(ChatScreen.routeName,arguments: {
-                                  'username':usersData[index]["username"],
-                                  'userId':usersData[index].id,
-                                  'userImage':usersData[index]["image_url"],
-                                });
-                              },
-                            ) : const SizedBox(height: 0,width: 0);                        
+                            if(contactList!.containsKey(usersData[index].id)){
+                              String contactName=usersData[index]["fName"]+" "+usersData[index]["lName"];
+                              if(currentUser!.uid == usersData[index].id){
+                                contactName+=" (Myself)";
+                              }
+                              return ContactItem(
+                                imageUrl: usersData[index]["imageUrl"],
+                                userName: contactName,
+                                userEmail: usersData[index]["email"],
+                                navigateToChat: (){
+                                    Navigator.of(context).pushNamed(ChatScreen.routeName,arguments: {
+                                      'username':contactName,
+                                      'userId':usersData[index].id,
+                                      'userImage':usersData[index]["imageUrl"],
+                                    });
+                                  },
+                              );
+                            }
+                            return const SizedBox(height: 0,width: 0);                        
                           },
                         );
                     },
