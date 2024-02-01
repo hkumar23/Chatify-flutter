@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:chatify2/misc/appconstants.dart';
+import 'package:chatify2/misc/app_constants.dart';
 import 'package:chatify2/utils/app_methods.dart';
 import 'package:flutter/material.dart';
 
@@ -13,54 +13,55 @@ class UserImagePicker extends StatefulWidget {
 
 class _UserImagePickerState extends State<UserImagePicker> {
   File? pickedImage;
-  void  _selectImage() async {
-      pickedImage=await AppMethods.pickImage();
-      setState(() {
-        widget.pickImagefn(pickedImage);
-      });
+  void _selectImage() async {
+    pickedImage = await AppMethods.pickImage();
+    setState(() {
+      widget.pickImagefn(pickedImage);
+    });
   }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: _selectImage,
       child: Column(
         children: [
-          Container(      
+          Container(
             decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(50)),
-              boxShadow: [BoxShadow(
-                offset: Offset(0, 2),
-                color: Colors.blueGrey,
-                blurRadius: 7,
-                )]
+                borderRadius: BorderRadius.all(Radius.circular(50)),
+                boxShadow: [
+                  BoxShadow(
+                    offset: Offset(0, 2),
+                    color: Colors.blueGrey,
+                    blurRadius: 7,
+                  )
+                ]),
+            child: CircleAvatar(
+              radius: 50,
+              // backgroundColor: Colors.grey,
+              backgroundImage: pickedImage != null
+                  ? FileImage(pickedImage!)
+                  : const NetworkImage(AppConstants.blankProfileImage)
+                      as ImageProvider,
             ),
-            child:CircleAvatar(
-                      radius: 50,
-                      // backgroundColor: Colors.grey,
-                      backgroundImage: 
-                      pickedImage!=null ? 
-                      FileImage(pickedImage!) : 
-                      const NetworkImage(AppConstants.blankProfileImage) as ImageProvider,
-                    ),
           ),
           const SizedBox(height: 5),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-            Icon(
-              Icons.image,
-              color: Theme.of(context).colorScheme.primary,
-              ),
-            const SizedBox(width: 2),
-            Text(
-              "Add Image",
-              style:
-              TextStyle(
+              Icon(
+                Icons.image,
                 color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.w500,
               ),
-            ),
-          ],
+              const SizedBox(width: 2),
+              Text(
+                "Add Image",
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           )
         ],
       ),

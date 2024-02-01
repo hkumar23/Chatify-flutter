@@ -227,7 +227,7 @@ class ProfileScreen extends StatelessWidget {
                                               for(int i=0; i<projectDocs.length; ++i){
                                                 list.add(
                                                   ProjectItem(
-                                                    title: projectDocs[i]["projectName"],
+                                                    title: "${i+1}. ${projectDocs[i]["title"]}",
                                                     description: projectDocs[i]["description"],
                                                     )
                                                 );
