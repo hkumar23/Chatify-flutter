@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:chatify2/misc/app_constants.dart';
+import 'package:chatify2/misc/app_language.dart';
 import 'package:chatify2/utils/app_methods.dart';
 import 'package:flutter/material.dart';
 
@@ -55,7 +56,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
               ),
               const SizedBox(width: 2),
               Text(
-                "Add Image",
+                AppLanguage.addImage,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.w500,

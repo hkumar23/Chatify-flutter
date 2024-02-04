@@ -109,14 +109,14 @@ class Auth with ChangeNotifier {
         final userData = fethedUserdata.data();
 
         userEmail = userData![AppConstants.email];
-        fName = userData["fName"];
-        lName = userData["lName"];
-        imageUrl = userData["imageUrl"];
+        fName = userData[AppConstants.fName];
+        lName = userData[AppConstants.lName];
+        imageUrl = userData[AppConstants.imageUrl];
         about = userData[AppConstants.about];
         address = userData[AppConstants.address];
         profession = userData[AppConstants.profession];
-        socialMediaLinks = userData["socialMediaLinks"];
-        techSkills = userData["techSkills"];
+        socialMediaLinks = userData[AppConstants.socialMediaLinks];
+        techSkills = userData[AppConstants.techSkills];
         // print("$userEmail+$userImageUrl+$username");
       } else {
         final authResult = await auth.createUserWithEmailAndPassword(
@@ -132,28 +132,28 @@ class Auth with ChangeNotifier {
         await ref.putFile(userImageFile!);
 
         imageUrl = await ref.getDownloadURL();
-        userData["imageUrl"] = imageUrl;
+        userData[AppConstants.imageUrl] = imageUrl;
 
         await FirebaseFirestore.instance
-            .collection("users")
+            .collection(AppConstants.users)
             .doc(authResult.user!.uid)
             .set(userData);
 
         await FirebaseFirestore.instance
-            .collection("userEmails")
+            .collection(AppConstants.userEmails)
             .doc(email)
             .set({
-          'userid': userId,
+          AppConstants.userId: userId,
         });
 
-        userEmail = userData!["email"];
-        fName = userData["fName"];
-        lName = userData["lName"];
-        about = userData["about"];
-        address = userData["address"];
-        profession = userData["profession"];
-        socialMediaLinks = userData["socialMediaLinks"];
-        techSkills = userData["techSkills"];
+        userEmail = userData![AppConstants.email];
+        fName = userData[AppConstants.fName];
+        lName = userData[AppConstants.lName];
+        about = userData[AppConstants.about];
+        address = userData[AppConstants.address];
+        profession = userData[AppConstants.profession];
+        socialMediaLinks = userData[AppConstants.socialMediaLinks];
+        techSkills = userData[AppConstants.techSkills];
         // sharedPreferences.setString("userId", userId!);
         // sharedPreferences.setString("email", email);
         // sharedPreferences.setString("image_url", userImageUrl!);
@@ -208,7 +208,7 @@ class Auth with ChangeNotifier {
           .collection(AppConstants.users)
           .doc(userId)
           .update({
-        "imageUrl": imageUrl,
+        AppConstants.imageUrl: imageUrl,
       });
     } catch (err) {
       rethrow;

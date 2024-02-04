@@ -19,4 +19,16 @@ class AppConstants {
   static const String address = "address";
   static const String profession = "profession";
   static const String userImage = "user_image";
+  static const String projects = "projects";
+  static const String fName = "f_name";
+  static const String lName = "l_name";
+  static const String contacts = "contacts";
+  static const String techSkills = "tech_skills";
+  static const String socialMediaLinks = "social_media_links";
+  static const String chats = "chats";
+  static const String messages = "messages";
+  static const String createdOn = "created_on";
+  static const String text = "text";
+  static const String userId = "user_id";
+  static const String userEmails = "user_emails";
 }

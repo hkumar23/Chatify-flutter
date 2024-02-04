@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:chatify2/misc/app_constants.dart';
 import 'package:chatify2/misc/app_language.dart';
 import 'package:chatify2/providers/auth.dart';
 import 'package:chatify2/screens/home_screen.dart';
@@ -86,7 +87,7 @@ class SettingsScreen extends StatelessWidget {
                 flex: 4,
                 child: StreamBuilder(
                     stream: FirebaseFirestore.instance
-                        .collection("users")
+                        .collection(AppConstants.users)
                         .doc(currUser!.uid)
                         .snapshots(),
                     builder: (context, userSnapshot) {
@@ -98,8 +99,9 @@ class SettingsScreen extends StatelessWidget {
                           child: CircularProgressIndicator(),
                         );
                       }
-                      final fullName =
-                          userData["fName"] + " " + userData["lName"];
+                      final fullName = userData[AppConstants.fName] +
+                          " " +
+                          userData[AppConstants.lName];
                       return Column(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
@@ -115,8 +117,8 @@ class SettingsScreen extends StatelessWidget {
                                   ]),
                               child: CircleAvatar(
                                 radius: 70,
-                                backgroundImage:
-                                    NetworkImage(userData["imageUrl"]),
+                                backgroundImage: NetworkImage(
+                                    userData[AppConstants.imageUrl]),
                               ),
                             ),
                             const SizedBox(
@@ -132,7 +134,7 @@ class SettingsScreen extends StatelessWidget {
                                       fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              userData["email"],
+                              userData[AppConstants.email],
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyLarge!
@@ -152,7 +154,7 @@ class SettingsScreen extends StatelessWidget {
                   // color: Colors.amber,
                   padding: const EdgeInsets.only(left: 5, top: 10),
                   child: Text(
-                    "Settings",
+                    AppLanguage.settings,
                     style: GoogleFonts.oswald(
                       color: Colors.lightBlueAccent,
                       letterSpacing: 5,
@@ -179,7 +181,7 @@ class SettingsScreen extends StatelessWidget {
                           ListTile(
                             leading: const Icon(Icons.account_circle),
                             title: const Text(
-                              "My Profile",
+                              AppLanguage.myProfile,
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                             onTap: () {
@@ -192,7 +194,7 @@ class SettingsScreen extends StatelessWidget {
                           ListTile(
                             leading: const Icon(Icons.edit),
                             title: const Text(
-                              "Edit Name",
+                              AppLanguage.editName,
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                             // trailing: const Icon(Icons.arrow_forward_ios_rounded),
@@ -216,7 +218,7 @@ class SettingsScreen extends StatelessWidget {
                                         TextField(
                                           controller: _fNameController,
                                           decoration: const InputDecoration(
-                                            label: Text("First Name"),
+                                            label: Text(AppLanguage.firstName),
                                             border: OutlineInputBorder(),
                                           ),
                                         ),
@@ -226,7 +228,7 @@ class SettingsScreen extends StatelessWidget {
                                         TextField(
                                           controller: _lNameController,
                                           decoration: const InputDecoration(
-                                            label: Text("Last Name"),
+                                            label: Text(AppLanguage.lastName),
                                             border: OutlineInputBorder(),
                                           ),
                                         )
@@ -236,7 +238,7 @@ class SettingsScreen extends StatelessWidget {
                                       OutlinedButton(
                                         onPressed: () =>
                                             Navigator.of(context).pop(),
-                                        child: const Text("Close"),
+                                        child: const Text(AppLanguage.close),
                                       ),
                                       FilledButton(
                                         onPressed: () {
@@ -246,7 +248,7 @@ class SettingsScreen extends StatelessWidget {
                                               userId: currUser.uid,
                                               context: context);
                                         },
-                                        child: const Text("Update"),
+                                        child: const Text(AppLanguage.update),
                                       ),
                                     ],
                                   );
@@ -281,7 +283,7 @@ class SettingsScreen extends StatelessWidget {
                           ListTile(
                             leading: Icon(MdiIcons.fileEdit),
                             title: const Text(
-                              "Edit Projects",
+                              "Edit/Add Projects",
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                             onTap: () {
@@ -292,6 +294,14 @@ class SettingsScreen extends StatelessWidget {
                                         const UserProjectsScreen()),
                               );
                             },
+                          ),
+                          ListTile(
+                            leading: Icon(MdiIcons.phoneMessage),
+                            title: const Text(
+                              "Social Media Links",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            onTap: () {},
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -340,13 +350,13 @@ class SettingsScreen extends StatelessWidget {
                                                 )),
                                           );
                                         },
-                                        child: const Text("Yes"),
+                                        child: const Text(AppLanguage.yes),
                                       ),
                                       OutlinedButton(
                                         onPressed: () {
                                           Navigator.of(context).pop();
                                         },
-                                        child: const Text("No"),
+                                        child: const Text(AppLanguage.no),
                                       )
                                     ],
                                   );
@@ -409,7 +419,7 @@ class SettingsScreen extends StatelessWidget {
                           ListTile(
                             leading: const Icon(Icons.logout),
                             title: const Text(
-                              "Logout",
+                              AppLanguage.logout,
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                             // trailing: const Icon(Icons.arrow_forward_ios_rounded),

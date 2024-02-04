@@ -1,3 +1,5 @@
+import 'package:chatify2/misc/app_constants.dart';
+import 'package:chatify2/misc/app_language.dart';
 import 'package:chatify2/screens/addcontact_screen.dart';
 import 'package:chatify2/screens/chat_screen.dart';
 import 'package:chatify2/utils/app_methods.dart';
@@ -8,14 +10,11 @@ import 'package:flutter/material.dart';
 
 import 'package:chatify2/widgets/contact_item.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 class HomeScreen extends StatefulWidget {
   static const routeName = '/home-screen';
-  
-  const HomeScreen(
-    this.themeBrightness,
-    this.toggleTheme, 
-    {super.key}
-    );
+
+  const HomeScreen(this.themeBrightness, this.toggleTheme, {super.key});
   final Brightness themeBrightness;
   final void Function() toggleTheme;
 
@@ -24,17 +23,20 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  Map<String,dynamic>? contactList;
-  var currentUser=FirebaseAuth.instance.currentUser;
+  Map<String, dynamic>? contactList;
+  var currentUser = FirebaseAuth.instance.currentUser;
 
   Future<void> fetchContactsList() async {
-    try{
-      var contacts = await FirebaseFirestore.instance.collection("contacts").doc(currentUser!.uid).get();
+    try {
+      var contacts = await FirebaseFirestore.instance
+          .collection(AppConstants.contacts)
+          .doc(currentUser!.uid)
+          .get();
       setState(() {
-        contactList=contacts.data();
+        contactList = contacts.data();
       });
       // print(contactList);
-    }catch(err){
+    } catch (err) {
       // print("user id: ${currentUser!.uid}");
       print("error for contacts: $err");
     }
@@ -58,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(    
+    return Scaffold(
       drawer: SideDrawer(widget.themeBrightness),
       appBar: AppBar(
         centerTitle: true,
@@ -66,95 +68,101 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Container(
           margin: const EdgeInsets.only(bottom: 5),
           child: Text(
-            "Chatify",
+            AppLanguage.chatify,
             style: GoogleFonts.pacifico(
-              textStyle: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                color: Theme.of(context).colorScheme.onSurface,
-                fontWeight: FontWeight.w500,
-              )
-            ),
-            ),
+                textStyle: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontWeight: FontWeight.w500,
+                    )),
+          ),
         ),
         actions: [
           IconButton(
-            onPressed: widget.toggleTheme, 
+            onPressed: widget.toggleTheme,
             icon: Icon(
-                widget.themeBrightness==Brightness.dark ?
-                Icons.dark_mode :
-                Icons.light_mode,
-                color: Theme.of(context).colorScheme.onSurface,
-               ),
+              widget.themeBrightness == Brightness.dark
+                  ? Icons.dark_mode
+                  : Icons.light_mode,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
-        ],  
-        ),
+        ],
+      ),
       body: RefreshIndicator(
         onRefresh: () => fetchContactsList(),
-        child: Stack(
-          children: [
-            Container(
+        child: Stack(children: [
+          Container(
             padding: const EdgeInsets.all(10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [      
+              children: [
                 Expanded(
-                  child: 
-                  StreamBuilder(
-                    stream: FirebaseFirestore.instance.collection('users').snapshots(),
-                    builder: (ctx,usersSnap) {
-                      if(usersSnap.connectionState == ConnectionState.waiting ||
-                      usersSnap.data==null){
-                        return const Center(child: CircularProgressIndicator(),);
-                      }
-                      // print(usersSnap.data!.docs);  
-                      var usersData=usersSnap.data!.docs;
-                      if(contactList==null){
-                        return Center(                              
-                          child:
-                           ListView(
-                            shrinkWrap: true,
-                             children: [Container(
-                              height: 200,
-                              width: 200,                          
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.background,
-                                image: DecorationImage(
-                                  invertColors: widget.themeBrightness == Brightness.dark ? true : false,
-                                  opacity: 0.5,                              
-                                  image: const NetworkImage("https://th.bing.com/th/id/OIG.KCTa5Lx9WmuAHAhivp4g?w=1024&h=1024&rs=1&pid=ImgDetMain")
-                                  ),                            
-                              ),
-                            ),]
-                           ),
-                        );
-                      }
-                      return ListView.builder(
-                          itemCount: usersData.length,
-                          itemBuilder: (ctx,index){
-                            // print(currentUser!.uid);
-                            if(contactList!.containsKey(usersData[index].id)){
-                              String contactName=usersData[index]["fName"]+" "+usersData[index]["lName"];
-                              if(currentUser!.uid == usersData[index].id){
-                                contactName+=" (Myself)";
-                              }
-                              return ContactItem(
-                                imageUrl: usersData[index]["imageUrl"],
-                                userName: contactName,
-                                userEmail: usersData[index]["email"],
-                                navigateToChat: (){
-                                    Navigator.of(context).pushNamed(ChatScreen.routeName,arguments: {
-                                      'username':contactName,
-                                      'userId':usersData[index].id,
-                                      'userImage':usersData[index]["imageUrl"],
-                                    });
-                                  },
-                              );
-                            }
-                            return const SizedBox(height: 0,width: 0);                        
-                          },
-                        );
-                    },
-                    )
-                ),
+                    child: StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection(AppConstants.users)
+                      .snapshots(),
+                  builder: (ctx, usersSnap) {
+                    if (usersSnap.connectionState == ConnectionState.waiting ||
+                        usersSnap.data == null) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    // print(usersSnap.data!.docs);
+                    var usersData = usersSnap.data!.docs;
+                    if (contactList == null) {
+                      return Center(
+                        child: ListView(shrinkWrap: true, children: [
+                          Container(
+                            height: 200,
+                            width: 200,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.background,
+                              image: DecorationImage(
+                                  invertColors:
+                                      widget.themeBrightness == Brightness.dark
+                                          ? true
+                                          : false,
+                                  opacity: 0.5,
+                                  image: const NetworkImage(
+                                      "https://th.bing.com/th/id/OIG.KCTa5Lx9WmuAHAhivp4g?w=1024&h=1024&rs=1&pid=ImgDetMain")),
+                            ),
+                          ),
+                        ]),
+                      );
+                    }
+                    return ListView.builder(
+                      itemCount: usersData.length,
+                      itemBuilder: (ctx, index) {
+                        // print(currentUser!.uid);
+                        if (contactList!.containsKey(usersData[index].id)) {
+                          String contactName = usersData[index]
+                                  [AppConstants.fName] +
+                              " " +
+                              usersData[index][AppConstants.lName];
+                          if (currentUser!.uid == usersData[index].id) {
+                            contactName += " (Myself)";
+                          }
+                          return ContactItem(
+                            imageUrl: usersData[index][AppConstants.imageUrl],
+                            userName: contactName,
+                            userEmail: usersData[index][AppConstants.email],
+                            navigateToChat: () {
+                              Navigator.of(context)
+                                  .pushNamed(ChatScreen.routeName, arguments: {
+                                'username': contactName,
+                                'userId': usersData[index].id,
+                                'userImage': usersData[index]
+                                    [AppConstants.imageUrl],
+                              });
+                            },
+                          );
+                        }
+                        return const SizedBox(height: 0, width: 0);
+                      },
+                    );
+                  },
+                )),
               ],
             ),
           ),
@@ -162,11 +170,12 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.all(20),
             alignment: Alignment.bottomRight,
             child: GestureDetector(
-              onTap: (){
+              onTap: () {
                 Navigator.of(context).pushNamed(AddContactScreen.routeName);
               },
               child: Container(
-                constraints: const BoxConstraints(maxHeight: 70,maxWidth: 70,minHeight: 60,minWidth: 60),
+                constraints: const BoxConstraints(
+                    maxHeight: 70, maxWidth: 70, minHeight: 60, minWidth: 60),
                 child: Card(
                   elevation: 5,
                   color: Theme.of(context).colorScheme.secondary,
@@ -174,13 +183,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     Icons.person_add,
                     size: 30,
                     color: Theme.of(context).colorScheme.onSecondary,
-                    ),
+                  ),
                 ),
               ),
             ),
           ),
-          ]
-        ),
+        ]),
       ),
     );
   }

@@ -1,28 +1,77 @@
+import 'package:chatify2/misc/app_constants.dart';
 import 'package:chatify2/misc/app_language.dart';
 import 'package:chatify2/models/project.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class EditProjectScreen extends StatelessWidget {
-  EditProjectScreen(
-      {required this.projectId, required this.projectObj, super.key});
-  final String projectId;
+class EditProjectScreen extends StatefulWidget {
+  const EditProjectScreen({
+    required this.projectId,
+    required this.projectObj,
+    required this.screenTitle,
+    super.key,
+  });
+  final String? projectId;
   final Project projectObj;
+  final String screenTitle;
+  @override
+  State<EditProjectScreen> createState() => _EditProjectScreenState();
+}
+
+class _EditProjectScreenState extends State<EditProjectScreen> {
+  bool isLoading = false;
+  final currUserId = FirebaseAuth.instance.currentUser!.uid;
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descController = TextEditingController();
   final TextEditingController _linkController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
+
+  _trySubmit() async {
+    FocusScope.of(context).unfocus();
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    _formKey.currentState!.save();
+    setState(() {
+      isLoading = true;
+    });
+
+    String snackVal = "Project Saved Successfully";
+    try {
+      final projData = widget.projectObj.toMap();
+      final collectionRef = FirebaseFirestore.instance
+          .collection(AppConstants.users)
+          .doc(currUserId)
+          .collection(AppConstants.projects);
+      widget.projectId == null
+          ? await collectionRef.add(projData)
+          : await collectionRef.doc(widget.projectId).update(projData);
+      setState(() {
+        isLoading = false;
+      });
+    } catch (err) {
+      snackVal = err.toString();
+      setState(() {
+        isLoading = false;
+      });
+    }
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(snackVal)));
+  }
 
   @override
   Widget build(BuildContext context) {
-    _titleController.text = projectObj.title;
-    _descController.text = projectObj.description;
-    _linkController.text = projectObj.projectLink;
+    _titleController.text = widget.projectObj.title;
+    _descController.text = widget.projectObj.description;
+    _linkController.text = widget.projectObj.projectLink;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Edit Project",
+          widget.screenTitle,
           style: Theme.of(context).textTheme.headlineSmall,
         ),
         centerTitle: true,
@@ -61,6 +110,9 @@ class EditProjectScreen extends StatelessWidget {
                     return null;
                   },
                   keyboardType: TextInputType.name,
+                  onSaved: (value) {
+                    widget.projectObj.title = value!;
+                  },
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 5, top: 15),
@@ -86,6 +138,9 @@ class EditProjectScreen extends StatelessWidget {
                   },
                   keyboardType: TextInputType.multiline,
                   maxLines: 7,
+                  onSaved: (value) {
+                    widget.projectObj.description = value!;
+                  },
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 5, top: 15),
@@ -110,13 +165,16 @@ class EditProjectScreen extends StatelessWidget {
                     return null;
                   },
                   keyboardType: TextInputType.url,
+                  onSaved: (value) {
+                    widget.projectObj.projectLink = value!;
+                  },
                 ),
                 Container(
                   width: double.infinity,
                   alignment: Alignment.center,
                   padding: const EdgeInsets.only(top: 15),
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: _trySubmit,
                     style: ButtonStyle(
                       padding: const MaterialStatePropertyAll(
                         EdgeInsets.symmetric(horizontal: 50, vertical: 10),
@@ -128,10 +186,14 @@ class EditProjectScreen extends StatelessWidget {
                         Theme.of(context).colorScheme.primary,
                       ),
                     ),
-                    child: const Text(
-                      "Save",
-                      style: TextStyle(fontSize: 20),
-                    ),
+                    child: isLoading == false
+                        ? const Text(
+                            AppLanguage.save,
+                            style: TextStyle(fontSize: 20),
+                          )
+                        : CircularProgressIndicator(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
                   ),
                 )
               ],

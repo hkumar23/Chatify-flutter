@@ -35,7 +35,22 @@ class UserProjectsScreen extends StatelessWidget {
                         Theme.of(context).colorScheme.outline.withOpacity(0.2),
                     borderRadius: const BorderRadius.all(Radius.circular(5))),
                 child: ListTile(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditProjectScreen(
+                          screenTitle: "Add New Project",
+                          projectId: null,
+                          projectObj: Project(
+                            title: "",
+                            description: "",
+                            projectLink: "",
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                   leading: const Icon(Icons.add_circle_outline_rounded),
                   title: Text(
                     "Add New Project",
@@ -66,6 +81,7 @@ class UserProjectsScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) => EditProjectScreen(
+                                screenTitle: "Edit Project",
                                 projectId: userProjects[index].id,
                                 projectObj: projectObj,
                               ),
