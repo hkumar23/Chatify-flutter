@@ -68,7 +68,12 @@ class AppMethods {
       await FirebaseFirestore.instance
           .collection(AppConstants.users)
           .doc(userId)
-          .update({"fName": fName.trim(), "lName": lName});
+          .update(
+        {
+          AppConstants.fName: fName.trim(),
+          AppConstants.lName: lName.trim(),
+        },
+      );
       labelVal = "Name successfully updated.";
       isUpdated = true;
     } catch (err) {
@@ -100,4 +105,22 @@ class AppMethods {
       ));
     }
   }
+
+  // static dynamic fetchUsersHandles(
+  //     BuildContext context) async {
+  //   try {
+  //     final fetchedData = await FirebaseFirestore.instance
+  //         .collection("users_handles")
+  //         .doc()
+  //         .get();
+  //     final usersHandles = fetchedData.data();
+  //     print(usersHandles);
+  //     return usersHandles;
+  //   } catch (err) {
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //       content: Text(err.toString()),
+  //       backgroundColor: Theme.of(context).colorScheme.error,
+  //     ));
+  //   }
+  // }
 }

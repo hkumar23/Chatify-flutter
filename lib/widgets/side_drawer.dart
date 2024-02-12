@@ -11,11 +11,11 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:provider/provider.dart';
 
 class SideDrawer extends StatelessWidget {
-  SideDrawer(this.themeBrightness, {super.key});
-  Brightness themeBrightness;
+  const SideDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Brightness themeBrightness = Theme.of(context).brightness;
     final currUser = FirebaseAuth.instance.currentUser;
 
     return Drawer(

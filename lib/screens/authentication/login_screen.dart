@@ -2,6 +2,7 @@ import 'package:chatify2/misc/app_language.dart';
 import 'package:chatify2/providers/auth.dart';
 import 'package:chatify2/screens/authentication/signup_screen.dart';
 import 'package:chatify2/screens/home_screen.dart';
+import 'package:chatify2/screens/messages_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

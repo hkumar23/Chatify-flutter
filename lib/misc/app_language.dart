@@ -40,4 +40,8 @@ class AppLanguage {
   static const String addNewContact = "Add New Contact";
   static const String uploadNewImage = "Upload New Image";
   static const String addImage = "Add Image";
+  static const String switchTheme = "Switch Theme";
+  static const String messages = "Messages";
+  static const String loginHere = "Login here";
+  static const String username = "Username";
 }

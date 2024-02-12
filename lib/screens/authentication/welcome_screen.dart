@@ -98,9 +98,9 @@ class AuthScreen extends StatelessWidget {
                         padding: const MaterialStatePropertyAll(
                             EdgeInsets.symmetric(horizontal: 26, vertical: 12)),
                         backgroundColor: MaterialStatePropertyAll(
-                            Theme.of(context).colorScheme.inversePrimary),
-                        foregroundColor: MaterialStatePropertyAll(
                             Theme.of(context).colorScheme.inverseSurface),
+                        foregroundColor: MaterialStatePropertyAll(
+                            Theme.of(context).colorScheme.onInverseSurface),
                         elevation: const MaterialStatePropertyAll(5),
                         shadowColor: MaterialStatePropertyAll(
                             Colors.black.withOpacity(0.5)),
@@ -139,7 +139,7 @@ class AuthScreen extends StatelessWidget {
                               Navigator.of(context)
                                   .pushNamed(LoginScreen.routeName);
                             },
-                            child: const Text("Login here"),
+                            child: const Text(AppLanguage.loginHere),
                           )
                         ],
                       ),

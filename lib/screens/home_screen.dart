@@ -1,67 +1,19 @@
 import 'package:chatify2/misc/app_constants.dart';
 import 'package:chatify2/misc/app_language.dart';
-import 'package:chatify2/screens/addcontact_screen.dart';
-import 'package:chatify2/screens/chat_screen.dart';
-import 'package:chatify2/utils/app_methods.dart';
+import 'package:chatify2/screens/messages_screen.dart';
+import 'package:chatify2/widgets/postsFeed/post_item.dart';
 import 'package:chatify2/widgets/side_drawer.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import 'package:chatify2/widgets/contact_item.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   static const routeName = '/home-screen';
-
-  const HomeScreen(this.themeBrightness, this.toggleTheme, {super.key});
-  final Brightness themeBrightness;
-  final void Function() toggleTheme;
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  Map<String, dynamic>? contactList;
-  var currentUser = FirebaseAuth.instance.currentUser;
-
-  Future<void> fetchContactsList() async {
-    try {
-      var contacts = await FirebaseFirestore.instance
-          .collection(AppConstants.contacts)
-          .doc(currentUser!.uid)
-          .get();
-      setState(() {
-        contactList = contacts.data();
-      });
-      // print(contactList);
-    } catch (err) {
-      // print("user id: ${currentUser!.uid}");
-      print("error for contacts: $err");
-    }
-  }
-
-  // void fetchData(BuildContext context) async {
-  //   await AppMethods.getUserDataFromLocalStorage(context);
-  // }
-
-  @override
-  void initState() {
-    super.initState();
-    fetchContactsList();
-  }
-
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   fetchData(context);
-  // }
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: SideDrawer(widget.themeBrightness),
+      drawer: const SideDrawer(),
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -78,117 +30,27 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           IconButton(
-            onPressed: widget.toggleTheme,
-            icon: Icon(
-              widget.themeBrightness == Brightness.dark
-                  ? Icons.dark_mode
-                  : Icons.light_mode,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
+              onPressed: () {
+                Navigator.of(context).pushNamed(MessagesScreen.routeName);
+              },
+              icon: Icon(
+                Icons.message,
+                color: Theme.of(context).colorScheme.onSurface,
+              ))
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: () => fetchContactsList(),
-        child: Stack(children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                    child: StreamBuilder(
-                  stream: FirebaseFirestore.instance
-                      .collection(AppConstants.users)
-                      .snapshots(),
-                  builder: (ctx, usersSnap) {
-                    if (usersSnap.connectionState == ConnectionState.waiting ||
-                        usersSnap.data == null) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                    // print(usersSnap.data!.docs);
-                    var usersData = usersSnap.data!.docs;
-                    if (contactList == null) {
-                      return Center(
-                        child: ListView(shrinkWrap: true, children: [
-                          Container(
-                            height: 200,
-                            width: 200,
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.background,
-                              image: DecorationImage(
-                                  invertColors:
-                                      widget.themeBrightness == Brightness.dark
-                                          ? true
-                                          : false,
-                                  opacity: 0.5,
-                                  image: const NetworkImage(
-                                      "https://th.bing.com/th/id/OIG.KCTa5Lx9WmuAHAhivp4g?w=1024&h=1024&rs=1&pid=ImgDetMain")),
-                            ),
-                          ),
-                        ]),
-                      );
-                    }
-                    return ListView.builder(
-                      itemCount: usersData.length,
-                      itemBuilder: (ctx, index) {
-                        // print(currentUser!.uid);
-                        if (contactList!.containsKey(usersData[index].id)) {
-                          String contactName = usersData[index]
-                                  [AppConstants.fName] +
-                              " " +
-                              usersData[index][AppConstants.lName];
-                          if (currentUser!.uid == usersData[index].id) {
-                            contactName += " (Myself)";
-                          }
-                          return ContactItem(
-                            imageUrl: usersData[index][AppConstants.imageUrl],
-                            userName: contactName,
-                            userEmail: usersData[index][AppConstants.email],
-                            navigateToChat: () {
-                              Navigator.of(context)
-                                  .pushNamed(ChatScreen.routeName, arguments: {
-                                'username': contactName,
-                                'userId': usersData[index].id,
-                                'userImage': usersData[index]
-                                    [AppConstants.imageUrl],
-                              });
-                            },
-                          );
-                        }
-                        return const SizedBox(height: 0, width: 0);
-                      },
-                    );
-                  },
-                )),
-              ],
-            ),
+      body: Padding(
+        padding: const EdgeInsets.all(5),
+        child: ListView.builder(
+          itemCount: 5,
+          itemBuilder: (context, index) => const PostItem(
+            userName: "User Name",
+            userImageUrl: AppConstants.blankProfileImage,
+            userEmail: "tempemail@test.com",
+            postImageUrl:
+                "https://i.pinimg.com/564x/c8/77/d3/c877d303866d6cbc9d0e58be1bfcec1a.jpg",
           ),
-          Container(
-            padding: const EdgeInsets.all(20),
-            alignment: Alignment.bottomRight,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.of(context).pushNamed(AddContactScreen.routeName);
-              },
-              child: Container(
-                constraints: const BoxConstraints(
-                    maxHeight: 70, maxWidth: 70, minHeight: 60, minWidth: 60),
-                child: Card(
-                  elevation: 5,
-                  color: Theme.of(context).colorScheme.secondary,
-                  child: Icon(
-                    Icons.person_add,
-                    size: 30,
-                    color: Theme.of(context).colorScheme.onSecondary,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ]),
+        ),
       ),
     );
   }

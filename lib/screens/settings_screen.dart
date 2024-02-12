@@ -4,6 +4,7 @@ import 'package:chatify2/misc/app_constants.dart';
 import 'package:chatify2/misc/app_language.dart';
 import 'package:chatify2/providers/auth.dart';
 import 'package:chatify2/screens/home_screen.dart';
+import 'package:chatify2/screens/messages_screen.dart';
 import 'package:chatify2/screens/profile_screen.dart';
 import 'package:chatify2/screens/tools_screen.dart';
 import 'package:chatify2/screens/user_projects_screen.dart';
@@ -61,7 +62,7 @@ class SettingsScreen extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       // backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-      drawer: SideDrawer(themeBrightness),
+      drawer: SideDrawer(),
       // appBar: AppBar(
       //   title: const Text("Settings"),
       //   backgroundColor: Colors.transparent,
@@ -384,7 +385,7 @@ class SettingsScreen extends StatelessWidget {
                                 ? Icons.dark_mode
                                 : Icons.light_mode),
                             title: const Text(
-                              "Switch Theme",
+                              AppLanguage.switchTheme,
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                             // trailing: const Icon(Icons.arrow_forward_ios_rounded),

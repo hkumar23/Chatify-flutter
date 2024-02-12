@@ -3,6 +3,7 @@ import 'package:chatify2/providers/contacts_prov.dart';
 import 'package:chatify2/screens/addcontact_screen.dart';
 import 'package:chatify2/screens/authentication/welcome_screen.dart';
 import 'package:chatify2/screens/home_screen.dart';
+import 'package:chatify2/screens/messages_screen.dart';
 import 'package:chatify2/screens/authentication/login_screen.dart';
 import 'package:chatify2/screens/settings_screen.dart';
 import 'package:chatify2/screens/authentication/signup_screen.dart';
@@ -31,15 +32,14 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  Brightness themeBrightness=Brightness.light;
+  Brightness themeBrightness = Brightness.light;
 
-  void toggleTheme(){
-    setState(() {      
-      if(themeBrightness==Brightness.dark){
-        themeBrightness=Brightness.light;
-      }
-      else{
-        themeBrightness=Brightness.dark;
+  void toggleTheme() {
+    setState(() {
+      if (themeBrightness == Brightness.dark) {
+        themeBrightness = Brightness.light;
+      } else {
+        themeBrightness = Brightness.dark;
       }
     });
   }
@@ -48,9 +48,9 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [        
-        ChangeNotifierProvider(create: (_)=> Auth()),
-        ChangeNotifierProvider(create: (_)=> Contacts()),
+      providers: [
+        ChangeNotifierProvider(create: (_) => Auth()),
+        ChangeNotifierProvider(create: (_) => Contacts()),
       ],
       child: MaterialApp(
         title: 'chatify2',
@@ -78,22 +78,24 @@ class _MyAppState extends State<MyApp> {
           useMaterial3: true,
         ),
         home: StreamBuilder(
-          stream: FirebaseAuth.instance.authStateChanges(), 
-          builder: (ctx,userSnapshot){
-            if(userSnapshot.hasData){              
-              return HomeScreen(themeBrightness,toggleTheme);
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (ctx, userSnapshot) {
+            if (userSnapshot.hasData) {
+              return const HomeScreen();
             }
             return const AuthScreen();
           },
-          ),
+        ),
         routes: {
-          HomeScreen.routeName :(context) => HomeScreen(themeBrightness,toggleTheme),
-          ChatScreen.routeName :(context) => const ChatScreen(),
-          AddContactScreen.routeName:(context) => AddContactScreen(),
+          HomeScreen.routeName: (context) => const HomeScreen(),
+          ChatScreen.routeName: (context) => const ChatScreen(),
+          AddContactScreen.routeName: (context) => const AddContactScreen(),
           LoginScreen.routeName: (context) => const LoginScreen(),
           SignupScreen.routeName: (context) => const SignupScreen(),
-          SettingsScreen.routeName: (context) => SettingsScreen(toggleTheme, themeBrightness),
+          SettingsScreen.routeName: (context) =>
+              SettingsScreen(toggleTheme, themeBrightness),
           AuthScreen.routeName: (context) => const AuthScreen(),
+          MessagesScreen.routeName: (context) => const MessagesScreen()
         },
       ),
     );

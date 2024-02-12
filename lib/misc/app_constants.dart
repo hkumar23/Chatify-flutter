@@ -31,4 +31,5 @@ class AppConstants {
   static const String text = "text";
   static const String userId = "user_id";
   static const String userEmails = "user_emails";
+  static const String userHandle = "user_handle";
 }

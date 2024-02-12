@@ -4,6 +4,7 @@ import 'package:chatify2/misc/app_constants.dart';
 import 'package:chatify2/misc/app_language.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
@@ -28,7 +29,7 @@ class Auth with ChangeNotifier {
     AppConstants.twitter: "",
   };
   String? techSkills;
-
+  String? userHandle;
   Auth({
     this.userEmail,
     this.fName,
@@ -40,6 +41,7 @@ class Auth with ChangeNotifier {
     this.profession,
     this.socialMediaLinks,
     this.techSkills,
+    this.userHandle,
   });
 
   void logout(BuildContext context) {
@@ -53,6 +55,7 @@ class Auth with ChangeNotifier {
     profession = null;
     socialMediaLinks = null;
     techSkills = null;
+    userHandle = null;
 
     Navigator.of(context).popUntil(ModalRoute.withName('/'));
     Navigator.of(context).pushNamed('/');
@@ -117,6 +120,7 @@ class Auth with ChangeNotifier {
         profession = userData[AppConstants.profession];
         socialMediaLinks = userData[AppConstants.socialMediaLinks];
         techSkills = userData[AppConstants.techSkills];
+        userHandle = userData[AppConstants.userHandle];
         // print("$userEmail+$userImageUrl+$username");
       } else {
         final authResult = await auth.createUserWithEmailAndPassword(
@@ -133,7 +137,7 @@ class Auth with ChangeNotifier {
 
         imageUrl = await ref.getDownloadURL();
         userData[AppConstants.imageUrl] = imageUrl;
-
+        // print(userData);
         await FirebaseFirestore.instance
             .collection(AppConstants.users)
             .doc(authResult.user!.uid)
@@ -146,6 +150,11 @@ class Auth with ChangeNotifier {
           AppConstants.userId: userId,
         });
 
+        await FirebaseFirestore.instance
+            .collection("users_handles")
+            .doc(userData[AppConstants.userHandle])
+            .set({AppConstants.userId: userId});
+
         userEmail = userData![AppConstants.email];
         fName = userData[AppConstants.fName];
         lName = userData[AppConstants.lName];
@@ -154,6 +163,7 @@ class Auth with ChangeNotifier {
         profession = userData[AppConstants.profession];
         socialMediaLinks = userData[AppConstants.socialMediaLinks];
         techSkills = userData[AppConstants.techSkills];
+        userHandle = userData[AppConstants.userHandle];
         // sharedPreferences.setString("userId", userId!);
         // sharedPreferences.setString("email", email);
         // sharedPreferences.setString("image_url", userImageUrl!);
