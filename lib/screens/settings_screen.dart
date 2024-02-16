@@ -15,6 +15,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -33,7 +34,7 @@ class SettingsScreen extends StatelessWidget {
     bool isUpdated = false;
     File? pickedImage;
     try {
-      pickedImage = await AppMethods.pickImage();
+      pickedImage = await AppMethods.pickImage(ImageSource.gallery);
       auth.updateImage(pickedImage, userId);
       contentVal = "Image Updated Successfully";
       isUpdated = true;
@@ -62,7 +63,7 @@ class SettingsScreen extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       // backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-      drawer: SideDrawer(),
+      drawer: const SideDrawer(),
       // appBar: AppBar(
       //   title: const Text("Settings"),
       //   backgroundColor: Colors.transparent,
@@ -271,10 +272,11 @@ class SettingsScreen extends StatelessWidget {
                                     return AlertDialog(
                                       content: GestureDetector(
                                         onTap: () => changeImageFn(
-                                            Provider.of<Auth>(context,
-                                                listen: false),
-                                            currUser.uid,
-                                            context),
+                                          Provider.of<Auth>(context,
+                                              listen: false),
+                                          currUser.uid,
+                                          context,
+                                        ),
                                         child: const UploadImageBox(),
                                       ),
                                     );

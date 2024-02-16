@@ -21,8 +21,9 @@ class Project {
 
   factory Project.fromMap(Map json) {
     return Project(
-        title: json[AppConstants.title],
-        description: json[AppConstants.description],
-        projectLink: json[AppConstants.projectLink]);
+      title: json[AppConstants.title],
+      description: json[AppConstants.description],
+      projectLink: json[AppConstants.projectLink],
+    );
   }
 }

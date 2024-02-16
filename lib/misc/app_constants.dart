@@ -32,4 +32,13 @@ class AppConstants {
   static const String userId = "user_id";
   static const String userEmails = "user_emails";
   static const String userHandle = "user_handle";
+  static const String userImageUrl = "user_image_url";
+  static const String postImageUrl = "post_image_url";
+  static const String likes = "likes";
+  static const String comments = "comments";
+  static const String caption = "caption";
+  static const String timestamp = "timestamp";
+  static const String posts = "posts";
+  static const String location = "location";
+  static const String usersPostImages = "users_post_images";
 }

@@ -2,6 +2,7 @@ import 'package:chatify2/misc/app_constants.dart';
 import 'package:chatify2/misc/app_language.dart';
 import 'package:chatify2/providers/auth.dart';
 import 'package:chatify2/screens/addcontact_screen.dart';
+import 'package:chatify2/screens/create_post_screen.dart';
 import 'package:chatify2/screens/profile_screen.dart';
 import 'package:chatify2/screens/settings_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -160,6 +161,16 @@ class SideDrawer extends StatelessWidget {
                     () {
                       Navigator.of(context)
                           .pushNamed(AddContactScreen.routeName);
+                    },
+                    null,
+                  ),
+                  _listTileBuilder(
+                    context,
+                    MdiIcons.upload,
+                    AppLanguage.createNewPost,
+                    () {
+                      Navigator.of(context)
+                          .pushNamed(CreatePostScreen.routeName);
                     },
                     null,
                   ),

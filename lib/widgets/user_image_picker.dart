@@ -4,6 +4,7 @@ import 'package:chatify2/misc/app_constants.dart';
 import 'package:chatify2/misc/app_language.dart';
 import 'package:chatify2/utils/app_methods.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class UserImagePicker extends StatefulWidget {
   const UserImagePicker(this.pickImagefn, {super.key});
@@ -15,7 +16,7 @@ class UserImagePicker extends StatefulWidget {
 class _UserImagePickerState extends State<UserImagePicker> {
   File? pickedImage;
   void _selectImage() async {
-    pickedImage = await AppMethods.pickImage();
+    pickedImage = await AppMethods.pickImage(ImageSource.gallery);
     setState(() {
       widget.pickImagefn(pickedImage);
     });

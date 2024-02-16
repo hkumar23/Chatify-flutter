@@ -2,6 +2,7 @@ import 'package:chatify2/providers/auth.dart';
 import 'package:chatify2/providers/contacts_prov.dart';
 import 'package:chatify2/screens/addcontact_screen.dart';
 import 'package:chatify2/screens/authentication/welcome_screen.dart';
+import 'package:chatify2/screens/create_post_screen.dart';
 import 'package:chatify2/screens/home_screen.dart';
 import 'package:chatify2/screens/messages_screen.dart';
 import 'package:chatify2/screens/authentication/login_screen.dart';
@@ -95,7 +96,8 @@ class _MyAppState extends State<MyApp> {
           SettingsScreen.routeName: (context) =>
               SettingsScreen(toggleTheme, themeBrightness),
           AuthScreen.routeName: (context) => const AuthScreen(),
-          MessagesScreen.routeName: (context) => const MessagesScreen()
+          MessagesScreen.routeName: (context) => const MessagesScreen(),
+          CreatePostScreen.routeName: (context) => CreatePostScreen(),
         },
       ),
     );

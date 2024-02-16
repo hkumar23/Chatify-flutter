@@ -4,7 +4,6 @@ import 'package:chatify2/misc/app_constants.dart';
 import 'package:chatify2/misc/app_language.dart';
 import 'package:chatify2/providers/auth.dart';
 import 'package:chatify2/screens/home_screen.dart';
-import 'package:chatify2/utils/app_methods.dart';
 import 'package:chatify2/widgets/user_image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -81,7 +80,7 @@ class _SignupScreenState extends State<SignupScreen> {
           .collection("users_handles")
           .doc(_formData[AppConstants.userHandle])
           .get();
-      print(docSnap.data());
+      // print(docSnap.data());
       if (docSnap.exists) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

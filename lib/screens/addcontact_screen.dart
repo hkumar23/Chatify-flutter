@@ -158,7 +158,7 @@ class _AddContactScreenState extends State<AddContactScreen> {
                               )
                             : FilledButton(
                                 onPressed: () => _submit(context),
-                                child: const Text(AppLanguage.emailAddress),
+                                child: const Text(AppLanguage.addContact),
                               ),
                       ],
                     ),

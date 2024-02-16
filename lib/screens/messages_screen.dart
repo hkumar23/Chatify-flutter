@@ -57,7 +57,8 @@ class _MessagesScreenState extends State<MessagesScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Theme.of(context).colorScheme.outlineVariant,
+        backgroundColor:
+            Theme.of(context).colorScheme.outlineVariant.withOpacity(0.2),
         title: Container(
           margin: const EdgeInsets.only(bottom: 5),
           child: Text(

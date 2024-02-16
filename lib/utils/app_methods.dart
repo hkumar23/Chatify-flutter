@@ -28,7 +28,6 @@ class AppMethods {
           .doc(userId)
           .get();
       final userData = userSnap.data();
-      // print(userData);
       return userData;
     } catch (err) {
       // print(err);
@@ -42,11 +41,11 @@ class AppMethods {
     }
   }
 
-  static Future<File> pickImage() async {
+  static Future<File> pickImage(ImageSource imageSource) async {
     // print("Picking image");
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(
-      source: ImageSource.gallery,
+      source: imageSource,
       // imageQuality: 100,
       maxWidth: 1080,
       maxHeight: 1080,
@@ -106,6 +105,20 @@ class AppMethods {
     }
   }
 
+  static String calcTimeDiff(DateTime initialDate) {
+    DateTime currDate = DateTime.now();
+    Duration diff = currDate.difference(initialDate);
+
+    if (diff.inDays > 0) {
+      return "${diff.inDays} days ago";
+    } else if (diff.inHours > 0) {
+      return "${diff.inHours}hrs ago";
+    } else if (diff.inMinutes > 0) {
+      return "${diff.inMinutes}mins ago";
+    } else {
+      return "Just now";
+    }
+  }
   // static dynamic fetchUsersHandles(
   //     BuildContext context) async {
   //   try {

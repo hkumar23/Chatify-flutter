@@ -44,4 +44,8 @@ class AppLanguage {
   static const String messages = "Messages";
   static const String loginHere = "Login here";
   static const String username = "Username";
+  static const String createNewPost = "Create New Post";
+  static const String caption = "Caption";
+  static const String location = "Location";
+  static const String publish = "Publish";
 }
