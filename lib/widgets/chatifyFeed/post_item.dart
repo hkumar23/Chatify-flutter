@@ -8,17 +8,11 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 
 class PostItem extends StatefulWidget {
   const PostItem({
-    required this.userHandle,
-    required this.userImageUrl,
     required this.postId,
-    // required this.userEmail,
-    // required this.postImageUrl,
     required this.postObj,
     super.key,
   });
   final Post postObj;
-  final String userHandle;
-  final String userImageUrl;
   final String postId;
 
   @override
@@ -26,51 +20,42 @@ class PostItem extends StatefulWidget {
 }
 
 class _PostItemState extends State<PostItem> {
-  Map<String, dynamic>? userData;
-  Future<void> fetchUserData() async {
-    // final currUserId = FirebaseAuth.instance.currentUser!.uid;
-    final tempData = await AppMethods.fetchUserDataFromServer(
-        widget.postObj.userId, context);
-    setState(() {
-      userData = tempData;
-    });
-  }
-
-  // @override
-  // void didChangeDependencies() {
-  //   // TODO: implement didChangeDependencies
-  //   super.didChangeDependencies();
-  //   fetchUserData();
+  // Future<void> fetchUserData() async {
+  //   // final currUserId = FirebaseAuth.instance.currentUser!.uid;
+  //   final tempData = await AppMethods.fetchUserDataFromServer(
+  //       widget.postObj.userId, context);
+  //   setState(() {
+  //     userData = tempData;
+  //   });
   // }
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    fetchUserData();
-  }
 
   @override
   Widget build(BuildContext context) {
-    // fetchUserDataAndComments(context);
-    // print(userData);
     final likesCount =
         widget.postObj.likes == null ? 0 : widget.postObj.likes!.length;
     // print(widget.postObj.likes);
 
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      child: userData == null
-          ? const SizedBox()
-          : Column(
+    return FutureBuilder(
+        future:
+            AppMethods.fetchUserDataFromServer(widget.postObj.userId, context),
+        builder: (context, userSnap) {
+          if (userSnap.connectionState == ConnectionState.waiting) {
+            return const SizedBox();
+          }
+          final userData = userSnap.data;
+          final deviceSize = MediaQuery.of(context).size;
+          return Container(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
+                Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(right: 10, left: 2),
+                        padding: const EdgeInsets.only(right: 10, left: 15),
                         child: CircleAvatar(
                           backgroundImage:
                               NetworkImage(userData![AppConstants.imageUrl]),
@@ -81,7 +66,7 @@ class _PostItemState extends State<PostItem> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            userData![AppConstants.userHandle],
+                            userData[AppConstants.userHandle],
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium!
@@ -107,13 +92,12 @@ class _PostItemState extends State<PostItem> {
                 ),
                 Container(
                   constraints:
-                      const BoxConstraints(maxHeight: 400, minHeight: 350),
-                  // height: 300,
-                  width: double.infinity,
+                      BoxConstraints(maxHeight: deviceSize.width * (4 / 3)),
+                  // height: deviceSize.width * (4 / 3),
+                  width: deviceSize.width,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
                     image: DecorationImage(
-                      fit: BoxFit.cover,
+                      fit: BoxFit.contain,
                       image: NetworkImage(widget.postObj.imageUrl),
                     ),
                   ),
@@ -145,7 +129,7 @@ class _PostItemState extends State<PostItem> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 160),
+                      padding: const EdgeInsets.only(left: 200),
                       child: IconButton(
                         onPressed: () {},
                         icon: Icon(
@@ -156,14 +140,19 @@ class _PostItemState extends State<PostItem> {
                     ),
                   ],
                 ),
-                likesCount > 0 ? Text("$likesCount Likes  ") : const SizedBox(),
+                likesCount > 0
+                    ? Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Text("$likesCount Likes  "),
+                      )
+                    : const SizedBox(),
                 Padding(
-                  padding: const EdgeInsets.only(top: 5),
+                  padding: const EdgeInsets.only(top: 5, left: 10, right: 10),
                   child: Wrap(
                     crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       Text(
-                        "${userData![AppConstants.userHandle]} ",
+                        "${userData[AppConstants.userHandle]} ",
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       ExpandableCaption(
@@ -174,6 +163,7 @@ class _PostItemState extends State<PostItem> {
                 )
               ],
             ),
-    );
+          );
+        });
   }
 }

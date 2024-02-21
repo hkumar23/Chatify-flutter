@@ -8,6 +8,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CreatePostScreen extends StatefulWidget {
@@ -20,6 +21,27 @@ class CreatePostScreen extends StatefulWidget {
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
   final _formKey = GlobalKey<FormState>();
+  Future<File> _cropImage(String imagePath) async {
+    CroppedFile? croppedFile = await ImageCropper().cropImage(
+      sourcePath: imagePath,
+      // aspectRatio: const CropAspectRatio(ratioX: 3, ratioY: 4),
+      aspectRatioPresets: [
+        CropAspectRatioPreset.square,
+        CropAspectRatioPreset.ratio4x3,
+      ],
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarColor: Theme.of(context).colorScheme.primaryContainer,
+          // toolbarWidgetColor: Theme.of(context).colorScheme.primary,
+          // cropGridColor: Theme.of(context).colorScheme.onPrimaryContainer,
+          activeControlsWidgetColor: Theme.of(context).colorScheme.primary,
+          initAspectRatio: CropAspectRatioPreset.square,
+          lockAspectRatio: true,
+        ),
+      ],
+    );
+    return File(croppedFile!.path);
+  }
 
   final currUserId = FirebaseAuth.instance.currentUser!.uid;
   Map<String, dynamic> postForm = {
@@ -32,6 +54,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   };
 
   File? pickedImage;
+  File? croppedImage;
   bool isLoading = false;
 
   @override
@@ -44,17 +67,21 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     // }
 
     void onLeftTap() async {
-      final tempData = await AppMethods.pickImage(ImageSource.gallery);
+      File tempPickedImage = await AppMethods.pickImage(ImageSource.gallery);
+      File tempCroppedImage = await _cropImage(tempPickedImage.path);
       setState(() {
-        pickedImage = tempData;
+        croppedImage = tempCroppedImage;
+        pickedImage = croppedImage;
       });
       // print(pickedImage);
     }
 
     void onRightTap() async {
-      final tempData = await AppMethods.pickImage(ImageSource.camera);
+      File tempPickedImage = await AppMethods.pickImage(ImageSource.camera);
+      File tempCroppedImage = await _cropImage(tempPickedImage.path);
       setState(() {
-        pickedImage = tempData;
+        croppedImage = tempCroppedImage;
+        pickedImage = croppedImage;
       });
       // print(pickedImage);
     }
@@ -116,7 +143,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     }
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
+      // extendBodyBehindAppBar: true,
       appBar: AppBar(
         centerTitle: true,
         title: const Text(AppLanguage.createNewPost),
@@ -128,13 +155,18 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             Stack(
               children: [
                 SizedBox(
-                    height: deviceSize.height * 0.58,
-                    child: pickedImage == null
-                        ? Image.network(
-                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmTQ_4y3lVTEMR9L3V76FtG79sAi-gg6ZrXdHdnwcRB8X8QYf5uKJxo8J37r6B9XuI9ZU&usqp=CAU",
-                            fit: BoxFit.cover,
-                          )
-                        : Image.file(pickedImage!)),
+                  // height: deviceSize.height * 0.58,
+                  width: deviceSize.width,
+                  child: pickedImage == null
+                      ? Image.network(
+                          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmTQ_4y3lVTEMR9L3V76FtG79sAi-gg6ZrXdHdnwcRB8X8QYf5uKJxo8J37r6B9XuI9ZU&usqp=CAU",
+                          fit: BoxFit.cover,
+                        )
+                      : Image.file(
+                          pickedImage!,
+                          fit: BoxFit.cover,
+                        ),
+                ),
                 Positioned(
                   bottom: 10,
                   left: 20,

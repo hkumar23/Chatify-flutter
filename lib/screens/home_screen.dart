@@ -2,13 +2,11 @@ import 'package:chatify2/misc/app_constants.dart';
 import 'package:chatify2/misc/app_language.dart';
 import 'package:chatify2/models/post.dart';
 import 'package:chatify2/screens/messages_screen.dart';
-import 'package:chatify2/utils/app_methods.dart';
 import 'package:chatify2/widgets/chatifyFeed/post_item.dart';
 import 'package:chatify2/widgets/side_drawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = '/home-screen';
@@ -19,15 +17,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  var userData;
-  Future<void> fetchUserData(String userId, BuildContext context) async {
-    try {
-      userData = AppMethods.fetchUserDataFromServer(userId, context);
-    } catch (err) {
-      print(err);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     // Map<String,dynamic>? userData;
@@ -68,19 +57,17 @@ class _HomeScreenState extends State<HomeScreen> {
               return const Center(child: CircularProgressIndicator());
             }
             final postsData = postsSnap.data!.docs;
-            // print(postsData[0]["caption"]);
+            postsData.shuffle();
             return Padding(
-              padding: const EdgeInsets.all(5),
+              padding: const EdgeInsets.symmetric(vertical: 5),
               child: ListView.builder(
+                  cacheExtent: (postsData.length) * 510,
                   itemCount: postsData.length,
                   itemBuilder: (context, index) {
-                    fetchUserData(
-                        postsData[index][AppConstants.userId], context);
                     Post postObj = Post.fromMap(postsData[index].data());
                     return PostItem(
+                      key: UniqueKey(),
                       postObj: postObj,
-                      userHandle: AppConstants.userHandle,
-                      userImageUrl: AppConstants.blankProfileImage,
                       postId: postsData[index].id,
                     );
                   }),
