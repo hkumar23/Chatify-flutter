@@ -4,42 +4,30 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class NewMessage extends StatefulWidget {
-  final String chatId;
-  const NewMessage(this.chatId, {super.key});
+class NewComment extends StatefulWidget {
+  const NewComment({super.key, required this.postId});
+  final String postId;
   @override
-  State<NewMessage> createState() => _NewMessageState();
+  State<NewComment> createState() => _NewCommentState();
 }
 
-class _NewMessageState extends State<NewMessage> {
-  var _enteredMessage = "";
-  final _controller = TextEditingController();
+class _NewCommentState extends State<NewComment> {
+  String? _enteredMessage = "";
+  final currUserId = FirebaseAuth.instance.currentUser!.uid;
+  final TextEditingController _controller = TextEditingController();
 
-  // @override
-  // void dispose() {
-  //   _controller.dispose();
-  //   super.dispose();
-  // }
-
-  void _sendMessage() async {
+  Future<void> _sendMessage() async {
     FocusScope.of(context).unfocus();
     _controller.clear();
-    var currentUser = FirebaseAuth.instance.currentUser;
-    var userSnapshot = await FirebaseFirestore.instance
-        .collection(AppConstants.users)
-        .doc(currentUser!.uid)
-        .get();
 
-    FirebaseFirestore.instance
-        .collection(AppConstants.chats)
-        .doc(widget.chatId)
-        .collection(AppConstants.messages)
-        .add({
+    final commentsRef = FirebaseFirestore.instance
+        .collection(AppConstants.posts)
+        .doc(widget.postId)
+        .collection(AppConstants.comments);
+    await commentsRef.add({
       AppConstants.text: _enteredMessage,
-      AppConstants.createdOn: Timestamp.now(),
-      AppConstants.userId: currentUser.uid,
-      AppConstants.fName: userSnapshot[AppConstants.fName],
-      AppConstants.lName: userSnapshot[AppConstants.lName],
+      AppConstants.timestamp: Timestamp.now(),
+      AppConstants.userId: currUserId,
     });
     setState(() {
       _enteredMessage = "";
@@ -48,17 +36,17 @@ class _NewMessageState extends State<NewMessage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(top: 8),
-      padding: const EdgeInsets.all(8),
+    return SizedBox(
+      width: 500,
+      // margin: const EdgeInsets.only(top: 8),
+      // padding: const EdgeInsets.all(8),
       child: Row(
         children: [
           Expanded(
             child: TextField(
               decoration: InputDecoration(
                 suffixIcon: IconButton(
-                  onPressed:
-                      _enteredMessage.trim().isEmpty ? null : _sendMessage,
+                  onPressed: _enteredMessage!.isEmpty ? null : _sendMessage,
                   icon: Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
@@ -72,14 +60,14 @@ class _NewMessageState extends State<NewMessage> {
                     ),
                   ),
                 ),
-                label: const Text(AppLanguage.sendAMessage),
+                label: const Text(AppLanguage.addAComment),
                 border: const OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(50)),
                 ),
               ),
               onChanged: (value) {
                 setState(() {
-                  _enteredMessage = value;
+                  _enteredMessage = value.trim();
                 });
               },
               controller: _controller,

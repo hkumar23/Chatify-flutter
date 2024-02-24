@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:chatify2/misc/app_constants.dart';
 import 'package:chatify2/models/post.dart';
 import 'package:chatify2/utils/app_methods.dart';
@@ -50,7 +52,7 @@ class _PostItemState extends State<PostItem> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.only(bottom: 7),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -91,15 +93,13 @@ class _PostItemState extends State<PostItem> {
                   ),
                 ),
                 Container(
-                  constraints:
-                      BoxConstraints(maxHeight: deviceSize.width * (4 / 3)),
-                  // height: deviceSize.width * (4 / 3),
-                  width: deviceSize.width,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      fit: BoxFit.contain,
-                      image: NetworkImage(widget.postObj.imageUrl),
-                    ),
+                  constraints: BoxConstraints(
+                    maxHeight: deviceSize.width * (4 / 3),
+                  ),
+                  child: Image.network(
+                    widget.postObj.imageUrl,
+                    fit: BoxFit.fitWidth,
+                    alignment: Alignment.center,
                   ),
                 ),
                 Row(
@@ -147,7 +147,8 @@ class _PostItemState extends State<PostItem> {
                       )
                     : const SizedBox(),
                 Padding(
-                  padding: const EdgeInsets.only(top: 5, left: 10, right: 10),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   child: Wrap(
                     crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
@@ -160,7 +161,8 @@ class _PostItemState extends State<PostItem> {
                       ),
                     ],
                   ),
-                )
+                ),
+                const Divider(),
               ],
             ),
           );

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:chatify2/misc/app_constants.dart';
 import 'package:chatify2/misc/app_language.dart';
+import 'package:chatify2/screens/home_screen.dart';
 import 'package:chatify2/utils/app_methods.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -139,7 +140,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           backgroundColor: snackBarColor,
         ),
       );
-      Navigator.of(context).pop();
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil(HomeScreen.routeName, (route) => false);
     }
 
     return Scaffold(

@@ -48,4 +48,6 @@ class AppLanguage {
   static const String caption = "Caption";
   static const String location = "Location";
   static const String publish = "Publish";
+  static const String sendAMessage = "Send a message...";
+  static const String addAComment = "Add a comment...";
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:chatify2/misc/app_constants.dart';
 import 'package:chatify2/misc/app_language.dart';
 import 'package:chatify2/providers/auth.dart';
+import 'package:chatify2/screens/create_post_screen.dart';
 import 'package:chatify2/screens/home_screen.dart';
 import 'package:chatify2/screens/messages_screen.dart';
 import 'package:chatify2/screens/profile_screen.dart';
@@ -365,6 +366,17 @@ class SettingsScreen extends StatelessWidget {
                                   );
                                 },
                               );
+                            },
+                          ),
+                          ListTile(
+                            leading: const Icon(Icons.upload),
+                            title: const Text(
+                              AppLanguage.createNewPost,
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            onTap: () {
+                              Navigator.of(context)
+                                  .pushNamed(CreatePostScreen.routeName);
                             },
                           ),
                           ListTile(
