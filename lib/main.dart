@@ -97,7 +97,7 @@ class _MyAppState extends State<MyApp> {
               SettingsScreen(toggleTheme, themeBrightness),
           AuthScreen.routeName: (context) => const AuthScreen(),
           MessagesScreen.routeName: (context) => const MessagesScreen(),
-          CreatePostScreen.routeName: (context) => CreatePostScreen(),
+          CreatePostScreen.routeName: (context) => const CreatePostScreen(),
         },
       ),
     );

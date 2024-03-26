@@ -2,6 +2,7 @@ import 'package:chatify2/misc/app_constants.dart';
 import 'package:chatify2/misc/app_language.dart';
 import 'package:chatify2/screens/addcontact_screen.dart';
 import 'package:chatify2/screens/chat_screen.dart';
+import 'package:chatify2/screens/search_user_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -79,7 +80,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
         //       color: Theme.of(context).colorScheme.onSurface,
         //     ),
         //   ),
-        // ],
+        // ],b 
       ),
       body: RefreshIndicator(
         onRefresh: () => fetchContactsList(),
@@ -164,7 +165,12 @@ class _MessagesScreenState extends State<MessagesScreen> {
             alignment: Alignment.bottomRight,
             child: GestureDetector(
               onTap: () {
-                Navigator.of(context).pushNamed(AddContactScreen.routeName);
+                // Navigator.of(context).pushNamed(AddContactScreen.routeName);
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const SearchUserScreen(),
+                  ),
+                );
               },
               child: Container(
                 constraints: const BoxConstraints(

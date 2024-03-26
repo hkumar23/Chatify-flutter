@@ -321,6 +321,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       color: Theme.of(context).colorScheme.surface,
                     )
                   : const Text(AppLanguage.publish),
+            ),
+            const SizedBox(
+              height: 10,
             )
           ],
         ),
